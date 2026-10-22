@@ -19,6 +19,19 @@ WebView. No network API or new persisted entity is introduced by this contract.
 | Save error (mock 03) | Retain draft values and selections; explicitly state profile was not created | Retry attempts the same draft without requiring re-entry |
 | Saved (mock 04) | Show persisted name, currency, and optional appearance | Reopening loads the same identity and does not create a second profile |
 
+## System-restored setup
+
+After system-initiated background process termination and task restoration, recover the
+entered name, selected currency, and applied appearance choices through ViewModel saved
+state. Always enter Loading and reconcile with Room first: a committed profile opens
+Saved and clears the draft; confirmed absence restores Setup for explicit retry; a read
+failure opens Load error while preserving the draft. Never replay a restored Saving
+operation or generate a second identity merely because the UI was recreated.
+
+Draft recovery is not guaranteed after force-stop, task dismissal, reboot, or before
+Android captures background task state. These limits do not weaken persisted-profile
+durability. Dismissed/unapplied sheet edits are not required to resume.
+
 The failure mock is a state of the same setup flow, not a separate profile. Its sample
 storage advice is illustrative: implementation copy must match the actual failure and
 must not claim that low storage caused an unknown error. Saved status requires a committed
@@ -41,6 +54,9 @@ local record, not a button click or completion of an animation.
 
 - Localize labels, validation, loading, status, and error copy. Store currency identity
   separately from localized display labels.
+- Ship English default resources and English fallback for untranslated device languages.
+  Currency labels/formatting follow the device locale where supported; pseudolocale
+  expansion and RTL validation demonstrate readiness, not additional shipped translations.
 - Provide at least 48 dp touch targets, meaningful TalkBack labels, selected state,
   logical focus order, and announced errors/progress.
 - Use Material theme roles with verified text contrast: at least 4.5:1 for normal text
@@ -57,3 +73,6 @@ failure, duplicate-submit prevention, save retry retaining values, and existing-
 rendering. Validate localization and accessibility as described in
 [quickstart.md](../quickstart.md). The HTML demo's in-memory behavior proves neither Room
 persistence nor secure storage.
+Recovery tests also cover restored drafts with a committed record, confirmed absence,
+and read failure. Save failures retain values and offer retry (SC-005); invalid fields
+receive correction guidance and read failures remain distinct from failed creation.

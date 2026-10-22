@@ -69,18 +69,43 @@
 ### Localization and accessibility
 
 - **Decision**: Put user-visible strings in Android localization resources, use locale-aware
-  display for currency, and use Compose semantics and accessible control labels. Validate
-  representative locale layouts and TalkBack operation.
+  display for currency, and use Compose semantics and accessible control labels. Ship
+  English in default resources and fall back to it for untranslated device languages.
+  Validate a non-English device locale for fallback/currency behavior, expanded-text and
+  RTL pseudolocales for layout readiness, and TalkBack operation.
 - **Rationale**: This is aligned with the constitution and supports translated labels,
   assistive technology, and locale-specific presentation without a custom framework.
 - **Alternatives considered**: Hard-coded strings or a third-party localization and
-  accessibility layer; both add unnecessary barriers or dependencies.
+  accessibility layer; both add unnecessary barriers or dependencies. Shipping additional
+  translations is outside the clarified Phase 1 scope; pseudolocales are not translations.
+
+### System-initiated interruption recovery
+
+- **Decision**: Use ViewModel `SavedStateHandle` for lightweight name, currency code, and
+  applied avatar/color identifiers. Recreate the state holder with saved-state-aware
+  ViewModel construction, including when using the explicit application container.
+- **Rationale**: ViewModel alone covers configuration changes, not process death.
+  Android saved state supports returning through a system-restored task and matches the
+  agreed recovery boundary without introducing a draft database or backup feature.
+- **Reconciliation**: Always read Room before presenting restored setup. Show a committed
+  profile and clear the draft, restore the draft only on confirmed absence, and retain it
+  behind retry when reading fails. Never restore a transient Saving flag as an operation
+  to replay; retry is explicit and uses atomic single-profile creation.
+- **Limitations**: Task saved state is not guaranteed after force-stop, task dismissal,
+  reboot, or before Android captures state. Only applied appearance choices must resume.
+- **Alternatives considered**: ViewModel-only draft storage loses process-death recovery;
+  a durable Room draft table would add recovery beyond the user's selected scope.
 
 ### Verification
 
 - **Decision**: Cover the profile repository and uniqueness constraints with Room tests;
   cover ViewModel intents and state transitions with coroutine tests; cover setup flows
   with Compose UI tests; add accessibility checks and manual TalkBack verification.
+- **Recovery validation**: Test fresh ViewModels with restored handles for committed,
+  absent, and read-failure cases. Separately verify background process termination and
+  task restoration on a device; Activity recreation or rotation is insufficient evidence.
+- **Acceptance populations**: Validate otherwise valid offline flows for SC-003 and
+  failed saves for SC-005; keep field-validation and read-error scenarios distinct.
 - **Rationale**: Tests map directly to the acceptance criteria and separate persistence,
   state, and interaction failures.
 - **Alternatives considered**: End-to-end UI tests alone, which provide weaker diagnosis
@@ -88,6 +113,8 @@
 
 ## References
 
+- Saved state for ViewModel and system-initiated process death:
+  https://developer.android.com/topic/libraries/architecture/viewmodel/viewmodel-savedstate
 - Material 3 in Compose (native component dependency and theming):
   https://developer.android.com/develop/ui/compose/designsystems/material3
 - Android UI architecture and unidirectional data flow:

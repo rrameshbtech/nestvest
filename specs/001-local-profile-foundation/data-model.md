@@ -22,6 +22,18 @@ or remote identifier is part of this entity.
 - Later family-circle records may reference `profileId`; Phase 1 creates no such records.
 - Expenses, assets, liabilities, and other financial records are outside this phase.
 
+## Restorable Setup Draft
+
+A lightweight UI-state value, not a completed profile or a new Room entity. It contains
+the entered name, selected currency code, and applied nullable avatar/color identifiers.
+Name and currency may be incomplete while editing; the PrimaryProfile validation rules
+apply before creation. Keep this value in ViewModel `SavedStateHandle`, separate from the
+durable profile and with no generated persistent identity.
+
+Restore it only through an Android system-restored task. Unapplied sheet choices are not
+part of the recovery guarantee. There is no durable draft table or recovery promise after
+force-stop, task dismissal, reboot, or termination before Android captures task state.
+
 ## Lifecycle
 
 1. **Absent**: No primary profile exists; profile setup is available.
@@ -33,6 +45,11 @@ or remote identifier is part of this entity.
 A profile ID is generated once as part of a successful creation operation and persisted
 with the profile. Repeated setup or application restart must not create a second primary
 profile. Failed persistence must not leave a profile that the UI reports as created.
+
+After system-initiated process recreation, read the database before selecting a UI state:
+a committed profile wins and clears the restored draft; confirmed absence permits draft
+editing/retry; a read error retains the draft but exposes only read retry. Do not replay
+an in-flight save automatically or present a restored draft as a completed record.
 
 ## Validation and Integrity
 

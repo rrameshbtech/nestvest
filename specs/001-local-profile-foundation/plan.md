@@ -15,6 +15,9 @@ Compose as the native UI component system, using the
 Keep profile data in app-private
 storage, disable cloud backup, and allow supported OS-level local device migration without
 adding app-managed export/import or synchronization.
+Resume unfinished setup through Android saved state after system-initiated background
+process termination, reconciling with Room before displaying a draft or saved profile.
+Ship English interface text with English fallback while preserving localization readiness.
 
 ## Technical Context
 
@@ -23,7 +26,8 @@ adding app-managed export/import or synchronization.
 **Primary Dependencies**: Jetpack Compose with the recommended
 `androidx.compose.material3:material3` component library, AndroidX ViewModel and lifecycle-aware
 collection, Room, Kotlin coroutines/Flow, and Android platform localization/accessibility
-support. Exact dependency versions are selected when the app module is established.
+support. Use ViewModel `SavedStateHandle` for restorable draft values, not a separate draft
+database. Exact dependency versions are selected when the app module is established.
 
 **Storage**: Room backed by SQLite in app-private internal storage. Use Android's
 platform-provided app isolation and device storage encryption. Configure OS data
@@ -31,7 +35,8 @@ extraction to exclude cloud backup while permitting supported local device-to-de
 migration. Do not add app-managed backup/export/import in this phase.
 
 **Testing**: JUnit-based unit and Room DAO tests, coroutine/Flow state tests, Compose UI
-tests, and Android accessibility checks plus manual TalkBack verification.
+tests, saved-state/process-recreation tests, and Android accessibility checks plus manual
+TalkBack verification. Rotation alone does not prove process-death recovery.
 
 **Target Platform**: Native Android mobile application; minimum supported Android version
 is set when the app module is initialized, with Phase 1 behavior limited to APIs available
@@ -48,6 +53,9 @@ normal interactive flow without waiting for network access.
 internet-facing data services, analytics, or app-managed transfer. Profile data remains
 local. Name and preferred currency are required; appearance is optional. Preserve the
 profile UUID when supported external OS-level migration restores the profile.
+Draft recovery is limited to system-restored tasks, not force-stop, task dismissal, or
+reboot. Persisted profiles retain their existing durability guarantees. English is the only
+shipped interface language; use English fallback and device-locale currency formatting.
 
 **Scale/Scope**: One profile per installation, one profile-creation flow, locally
 available currency choices, no family membership or sync, and no more than the profile
@@ -65,11 +73,14 @@ fields defined in the spec.
 - **Stable, merge-ready identity**: Pass. Generate a random UUID once at profile creation
   and persist it as the profile's stable identity; do not use auto-incrementing identity.
 - **Zero-friction setup**: Pass. Only name and currency are required; appearance is
-  optional and setup does not require network connectivity.
+  optional and setup does not require network connectivity. FR-010 draft recovery avoids
+  re-entry after system-restored interruptions without treating a draft as a profile.
 - **Localization and accessibility**: Pass. User-facing text is localizable and the
   Compose flow must expose accessible semantics, readable contrast, and operable controls.
+  English-only delivery does not hard-code a single-locale design; fallback, currency
+  presentation, expanded-text, and RTL behavior remain explicit validation targets.
 - **Quality gates**: Pass. Tests cover validation, save failure, persistence, identity,
-  offline behavior, localization readiness, and accessibility.
+  offline behavior, localization readiness, accessibility, and system-restored drafts.
 - **Scope conflict**: None. The selected Android and local database technologies support
   the requirements without adding a public service or expanding into family sync.
 
@@ -79,6 +90,34 @@ The Material 3 recommendation and mockup mapping preserve all gates above. Nativ
 components replace HTML controls; there is no WebView, React runtime, or external asset
 dependency. The mockup's simulated save is not evidence of persistence or data protection;
 the Android implementation must satisfy the original storage and error-handling gates.
+Recovery stores only lightweight draft values in local Android saved state, with no new
+cloud path or persistent draft table. Database reconciliation prevents duplicate profiles
+and false success; the clarified language and acceptance populations introduce no gate
+violations.
+
+## Recovery and Acceptance Design
+
+Save the name, currency code, and applied nullable avatar/color identifiers through
+`SavedStateHandle` as draft values change. Do not serialize repositories, database objects,
+or transient in-flight operations. On ViewModel recreation, enter Loading and read Room
+before acting on restored UI state:
+
+1. A committed profile takes precedence over any draft; show Saved and clear draft state.
+2. Confirmed absence restores the draft into editable Setup without automatically
+   resubmitting an interrupted save.
+3. A read failure shows Load error and retains the draft; retry reads again before
+   allowing creation. Never interpret an error as absence.
+
+Use the existing atomic single-profile creation path on explicit retry, preserving a
+committed UUID and preventing duplicates. Unapplied personalization-sheet edits need not
+resume; the applied selection is part of the recoverable draft. Saved-state restoration
+depends on Android saving the background task; there is no promise of durable drafts
+after force-stop, task removal, reboot, or interruption before state capture.
+
+Keep acceptance populations separate: SC-003 measures otherwise valid offline creation
+flows; SC-005 measures failed profile writes with retained input and retry. Invalid-field
+guidance and read-error recovery are separate acceptance tests. SC-001/SC-004 remain
+first-time-user measurements, not substitutes for functional test results.
 
 ## UI Design Reference
 
