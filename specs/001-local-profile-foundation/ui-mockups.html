@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NestVest · Phase 1 UI mockups</title>
+  <style>
+    :root { color-scheme: light; --ink: #202521; --muted: #626a62; --paper: #fafbf7; --line: #dce1d8; --green: #3d5844; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9ece5; color: var(--ink); font-family: system-ui, -apple-system, sans-serif; }
+    button, input, select { font: inherit; }
+    button, select { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid #53754e; outline-offset: 4px; }
+    .board { max-width: 1800px; margin: auto; padding: 48px 32px; }
+    .masthead { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-bottom: 30px; border-bottom: 1px solid #cbd2c6; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { font-size: clamp(28px, 4vw, 42px); font-weight: 500; letter-spacing: -.04em; margin: 10px 0; }
+    .intro { max-width: 570px; color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0; }
+    .tag { border: 1px solid #bdc8b8; padding: 9px 12px; border-radius: 4px; white-space: nowrap; font-size: 12px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 32px 24px; margin-top: 32px; }
+    .specimen { min-width: 0; }
+    .caption { display: flex; align-items: baseline; gap: 10px; margin: 0 auto 14px; max-width: 390px; }
+    .caption span { color: #697361; font-size: 11px; font-weight: 700; }
+    .caption h2 { font-size: 14px; font-weight: 550; margin: 0; }
+    .phone { width: 100%; max-width: 390px; aspect-ratio: 390 / 844; margin: auto; border: 1px solid #aeb8a7; border-radius: 30px; background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+    .status { padding: 18px 24px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 650; }
+    .status-icons { display: flex; gap: 7px; align-items: center; }
+    .battery { width: 19px; height: 10px; border: 1px solid currentColor; border-radius: 2px; padding: 1px; }
+    .battery::after { content: ""; display: block; width: 80%; height: 100%; background: currentColor; }
+    .appbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; }
+    .brand { display: flex; gap: 9px; align-items: center; font-size: 16px; font-weight: 650; letter-spacing: -.04em; }
+    svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .local { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--green); }
+    .local svg { width: 13px; height: 13px; }
+    .content { flex: 1; overflow-y: auto; padding: 28px 24px 16px; }
+    .step { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; }
+    h3 { font-size: 32px; font-weight: 500; line-height: 1.15; letter-spacing: -.045em; margin: 14px 0 12px; }
+    p { font-size: 13px; line-height: 1.65; }
+    .sub { color: var(--muted); margin: 0 0 28px; }
+    .field { display: block; margin-bottom: 20px; }
+    .label { display: block; font-size: 12px; font-weight: 650; margin-bottom: 9px; }
+    input, select { width: 100%; min-height: 50px; border: 1px solid #b8c1b2; border-radius: 8px; padding: 12px; background: transparent; color: var(--ink); font-size: 14px; }
+    input::placeholder { color: #70786f; }
+    .hint { display: block; font-size: 11px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
+    .appearance { display: flex; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .avatar { display: grid; place-items: center; width: 44px; height: 44px; background: #e0e7d9; border-radius: 50%; color: #35492f; flex-shrink: 0; font-weight: 550; }
+    .appearance-copy { flex: 1; font-size: 12px; }
+    .appearance-copy small { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .text-button { color: var(--green); background: none; border: none; padding: 12px 4px; min-height: 48px; font-size: 12px; font-weight: 650; }
+    .footer { padding: 12px 24px 8px; }
+    .primary { width: 100%; min-height: 50px; border: 0; border-radius: 8px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 550; padding: 12px; }
+    .primary:hover { background: #354d3b; }
+    .footnote { color: var(--muted); font-size: 10px; text-align: center; margin: 12px 0; }
+    .homebar { height: 4px; width: 104px; border-radius: 8px; background: #252b24; margin: 10px auto 4px; }
+    .note { max-width: 390px; margin: 14px auto 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .preview-profile { text-align: center; padding: 8px 0 20px; }
+    .preview-profile .avatar { width: 76px; height: 76px; font-size: 27px; margin: auto; }
+    .preview-profile strong { display: block; font-size: 16px; margin-top: 12px; font-weight: 550; }
+    .preview-profile small { color: var(--muted); display: block; margin-top: 5px; font-size: 11px; }
+    fieldset { padding: 0; margin: 8px 0 20px; border: none; }
+    legend { font-size: 12px; font-weight: 650; margin-bottom: 12px; }
+    .choices { display: flex; flex-wrap: wrap; gap: 10px; }
+    .choice { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid #c3ccbc; background: transparent; color: var(--ink); border-radius: 50%; }
+    .choice[aria-pressed="true"] { outline: 2px solid var(--green); outline-offset: 3px; }
+    .sage { background: #d7e2d0; } .sand { background: #eadfc9; } .clay { background: #e8d1c7; } .blue { background: #d4dfe4; }
+    .skip { width: 100%; text-align: center; }
+    .error-box { border: 1px solid #d3ada1; border-radius: 8px; background: #f7eeea; color: #793e2d; padding: 14px; margin-bottom: 24px; }
+    .error-box strong { font-size: 12px; display: flex; align-items: center; gap: 8px; }
+    .error-box p { font-size: 11px; margin: 8px 0 0; }
+    .summary { border-top: 1px solid var(--line); margin: 20px 0; }
+    .row { display: flex; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .row span { color: var(--muted); } .row strong { font-weight: 550; }
+    .seal { width: 60px; height: 60px; border: 1px solid #a9b89e; border-radius: 50%; display: grid; place-items: center; color: var(--green); margin: 8px 0 28px; }
+    .seal svg { width: 26px; height: 26px; }
+    .saved-card { border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 26px 0; }
+    .saved-top { display: flex; align-items: center; gap: 12px; padding-bottom: 18px; }
+    .saved-top strong { display: block; font-size: 16px; font-weight: 550; }
+    .saved-top small { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .saved-card .row:last-child { border-bottom: none; padding-bottom: 0; }
+    .privacy { display: flex; gap: 10px; color: var(--muted); font-size: 11px; line-height: 1.65; }
+    .validation { color: #793e2d; font-size: 12px; }
+    [hidden] { display: none !important; }
+    .board-footer { margin-top: 36px; padding-top: 20px; border-top: 1px solid #cbd2c6; font-size: 12px; color: var(--muted); line-height: 1.7; }
+    @media (max-width: 600px) {
+      .board { padding: 24px 16px; } .masthead { display: block; } .tag { display: inline-block; margin-top: 16px; }
+      .phone { min-height: 760px; } .gallery { gap: 32px; }
+    }
+    @media (prefers-reduced-motion: no-preference) { button { transition: background-color .15s; } }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="nest" viewBox="0 0 24 24"><path d="M3 10 12 3l9 7M5 9v11h14V9M9 20v-7h6v7"/></symbol>
+    <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="leaf" viewBox="0 0 24 24"><path d="M19 4C7 3 3 9 6 15s14 4 13-11ZM7 18l8-9"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1"/></symbol>
+    <symbol id="mountain" viewBox="0 0 24 24"><path d="m2 20 8-15 5 8 3-5 5 12ZM7 11l3 2 2-4"/></symbol>
+    <symbol id="warning" viewBox="0 0 24 24"><path d="m12 3 10 18H2ZM12 9v5m0 3v1"/></symbol>
+  </svg>
+  <main class="board">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">NestVest / Product design / 01</div>
+        <h1>A small start. A steadier future.</h1>
+        <p class="intro">Local profile foundation. One quiet setup, only the essentials, and a place that feels like yours.</p>
+      </div>
+      <span class="tag">Phase 1 · Mobile screen studies</span>
+    </header>
+    <div class="gallery">
+      <section class="specimen" aria-labelledby="setup-label">
+        <div class="caption"><span>01 /</span><h2 id="setup-label">The essentials</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand"><svg aria-hidden="true"><use href="#nest"/></svg>NestVest</div><span class="local"><svg aria-hidden="true"><use href="#lock"/></svg>On this device</span></div>
+          <div class="content">
+            <div class="step">Your own space</div>
+            <h3>Let's start<br>with you.</h3>
+            <p class="sub">Just a name and a currency.<br>No account. No internet needed.</p>
+            <form id="setup" novalidate>
+              <label class="field"><span class="label">Your name</span><input id="name" name="name" placeholder="What should we call you?" autocomplete="given-name" required aria-describedby="name-error"><span id="name-error" class="validation" hidden>Enter a name to continue.</span></label>
+              <label class="field"><span class="label">Preferred currency</span><select id="currency" name="currency" required aria-describedby="currency-hint currency-error"><option value="">Choose your currency</option><option value="INR">INR — Indian rupee</option><option value="USD">USD — US dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British pound</option><option value="JPY">JPY — Japanese yen</option></select><span class="hint" id="currency-hint">The currency you'll use in your nest.</span><span id="currency-error" class="validation" hidden>Choose a currency to continue.</span></label>
+              <div class="appearance"><span class="avatar" id="setup-avatar">N</span><div class="appearance-copy">Make it feel like you<small>Avatar &amp; color · optional</small></div><button class="text-button" type="button" id="personalize">Choose</button></div>
+            </form>
+            <p id="setup-feedback" class="hint" role="status"></p>
+          </div>
+          <div class="footer"><button class="primary" type="submit" form="setup">Create my profile</button><p class="footnote">Your profile stays on your device.</p><div class="homebar" aria-hidden="true"></div></div>
+        </div>
+        <p class="note">FR-001–004, 006, 008 · Required fields only. Try submitting an empty form, or create a sample profile.</p>
+      </section>
+      <section class="specimen" aria-labelledby="appearance-label">
+        <div class="caption"><span>02 /</span><h2 id="appearance-label">A personal touch, if you like</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand"><svg aria-hidden="true"><use href="#nest"/></svg>NestVest</div><span class="local">Optional</span></div>
+          <div class="content">
+            <div class="step">A little more you</div>
+            <h3>Your nest,<br>your style.</h3>
+            <p class="sub">Pick a small detail to make this space yours.<br>Or leave it simple.</p>
+            <div class="preview-profile"><div class="avatar" id="appearance-avatar"><svg aria-hidden="true"><use href="#leaf"/></svg></div><strong id="appearance-name">Your profile</strong><small>Primary profile</small></div>
+            <fieldset><legend>Choose an avatar</legend><div class="choices" id="avatars"><button type="button" class="choice" aria-label="Leaf avatar" aria-pressed="true" data-icon="leaf"><svg aria-hidden="true"><use href="#leaf"/></svg></button><button type="button" class="choice" aria-label="Sun avatar" aria-pressed="false" data-icon="sun"><svg aria-hidden="true"><use href="#sun"/></svg></button><button type="button" class="choice" aria-label="Mountain avatar" aria-pressed="false" data-icon="mountain"><svg aria-hidden="true"><use href="#mountain"/></svg></button><button type="button" class="choice" aria-label="Home avatar" aria-pressed="false" data-icon="nest"><svg aria-hidden="true"><use href="#nest"/></svg></button></div></fieldset>
+            <fieldset><legend>Choose a color</legend><div class="choices" id="colors"><button type="button" class="choice sage" aria-label="Sage" aria-pressed="true" data-color="#d7e2d0"></button><button type="button" class="choice sand" aria-label="Sand" aria-pressed="false" data-color="#eadfc9"></button><button type="button" class="choice clay" aria-label="Clay" aria-pressed="false" data-color="#e8d1c7"></button><button type="button" class="choice blue" aria-label="Mist blue" aria-pressed="false" data-color="#d4dfe4"></button></div></fieldset>
+          </div>
+          <div class="footer"><button type="button" class="primary" id="apply-style">Use this look</button><button type="button" class="text-button skip" id="skip-style">Keep it simple</button><div class="homebar" aria-hidden="true"></div></div>
+        </div>
+        <p class="note">FR-003 · Built-in choices, no photo permissions. Apply a look or skip without blocking setup.</p>
+      </section>
+      <section class="specimen" aria-labelledby="error-label">
+        <div class="caption"><span>03 /</span><h2 id="error-label">An honest save failure</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand"><svg aria-hidden="true"><use href="#nest"/></svg>NestVest</div><span class="local"><svg aria-hidden="true"><use href="#lock"/></svg>On this device</span></div>
+          <div class="content">
+            <div class="step">Let's try that again</div>
+            <h3>A little pause.<br>Nothing lost.</h3>
+            <p class="sub">Your details are still here. Your profile<br>hasn't been created yet.</p>
+            <div class="error-box" id="save-error" role="status"><strong><svg aria-hidden="true"><use href="#warning"/></svg>Couldn't save on this device</strong><p>Check that your device has free storage, then try again. No details have been sent anywhere.</p></div>
+            <div class="summary"><div class="row"><span>Name</span><strong id="retry-name">Alex</strong></div><div class="row"><span>Currency</span><strong id="retry-currency">INR · Indian rupee</strong></div><div class="row"><span>Appearance</span><strong>Default</strong></div></div>
+            <p class="hint">No need to enter everything again.</p>
+          </div>
+          <div class="footer"><button class="primary" type="button" id="retry">Try saving again</button><p class="footnote">Demo: retry simulates a successful save.</p><div class="homebar" aria-hidden="true"></div></div>
+        </div>
+        <p class="note">FR-007 · No false success. Preserve entered values, explain the failure, and make retry straightforward.</p>
+      </section>
+      <section class="specimen" aria-labelledby="saved-label">
+        <div class="caption"><span>04 /</span><h2 id="saved-label">Saved, and here when you return</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand"><svg aria-hidden="true"><use href="#nest"/></svg>NestVest</div><span class="local"><svg aria-hidden="true"><use href="#lock"/></svg>On this device</span></div>
+          <div class="content">
+            <div class="seal"><svg aria-hidden="true"><use href="#check"/></svg></div>
+            <div class="step">Your foundation is ready</div>
+            <h3 id="saved-heading" tabindex="-1">Welcome to<br>your nest.</h3>
+            <p class="sub" id="saved-message">A space for a more mindful financial life.<br>Starting with you.</p>
+            <div class="saved-card"><div class="saved-top"><div class="avatar" id="saved-avatar">A</div><div><strong id="saved-name">Alex</strong><small>Primary profile · This device</small></div></div><div class="row"><span>Preferred currency</span><strong id="saved-currency">INR</strong></div><div class="row"><span>Profile status</span><strong id="profile-status">Saved locally*</strong></div></div>
+            <div class="privacy"><svg aria-hidden="true"><use href="#lock"/></svg><span>No cloud account. No sharing online.<br>Your profile is here whenever you return.</span></div>
+          </div>
+          <div class="footer"><p class="footnote" id="saved-announcement" role="status">*Illustrative saved state, not a real profile.</p><div class="homebar" aria-hidden="true"></div></div>
+        </div>
+        <p class="note">FR-004, 005, 009 · Returning users see the existing profile, not onboarding again. Identity stays behind the scenes.</p>
+      </section>
+    </div>
+    <footer class="board-footer">Interactive design prototype · 390 × 844 reference aspect ratio · No external fonts, libraries, or network requests.<br>Uses in-memory sample data only. It does not implement secure storage, persistence, transfer, or a financial dashboard. Reloading resets the demo. Currency choices are illustrative.</footer>
+  </main>
+  <script>
+    const byId = id => document.getElementById(id);
+    let selectedIcon = "leaf";
+    let selectedColor = "#d7e2d0";
+    let appearanceApplied = false;
+    let created = false;
+
+    function showAppearance() {
+      byId("appearance-name").textContent = byId("name").value.trim() || "Your profile";
+      byId("appearance-label").scrollIntoView({ behavior: "instant", block: "start" });
+      byId("avatars").querySelector("button").focus({ preventScroll: true });
+    }
+
+    function renderAvatar(element) {
+      if (appearanceApplied) {
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("aria-hidden", "true");
+        const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+        use.setAttribute("href", "#" + selectedIcon);
+        svg.append(use);
+        element.replaceChildren(svg);
+        element.style.backgroundColor = selectedColor;
+      } else {
+        element.textContent = (byId("name").value.trim() || "N").slice(0, 1).toLocaleUpperCase();
+        element.style.backgroundColor = "";
+      }
+    }
+
+    function finishAppearance(apply) {
+      appearanceApplied = apply;
+      renderAvatar(byId("setup-avatar"));
+      byId("setup-feedback").textContent = apply ? "Your look is selected. Finish setup whenever you're ready." : "Default appearance selected. Nothing extra needed.";
+      byId("personalize").focus();
+    }
+
+    for (const groupId of ["avatars", "colors"]) {
+      byId(groupId).addEventListener("click", event => {
+        const button = event.target.closest("button");
+        if (!button) return;
+        byId(groupId).querySelectorAll("button").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        if (groupId === "avatars") {
+          selectedIcon = button.dataset.icon;
+          byId("appearance-avatar").querySelector("use").setAttribute("href", "#" + selectedIcon);
+        } else {
+          selectedColor = button.dataset.color;
+          byId("appearance-avatar").style.backgroundColor = selectedColor;
+        }
+      });
+    }
+
+    function showSaved(name, currency, useAppearance) {
+      byId("saved-name").textContent = name;
+      byId("saved-currency").textContent = currency;
+      if (useAppearance) renderAvatar(byId("saved-avatar"));
+      else {
+        byId("saved-avatar").textContent = name.slice(0, 1).toLocaleUpperCase();
+        byId("saved-avatar").style.backgroundColor = "";
+      }
+      byId("saved-announcement").textContent = "Demo profile created in memory only. Reloading resets it.";
+      byId("profile-status").textContent = "Demo complete";
+      byId("saved-heading").focus();
+    }
+
+    byId("personalize").addEventListener("click", showAppearance);
+    byId("apply-style").addEventListener("click", () => finishAppearance(true));
+    byId("skip-style").addEventListener("click", () => finishAppearance(false));
+    byId("setup").addEventListener("submit", event => {
+      event.preventDefault();
+      if (created) {
+        byId("saved-heading").focus();
+        return;
+      }
+      const name = byId("name").value.trim();
+      const currency = byId("currency").value;
+      byId("name-error").hidden = Boolean(name);
+      byId("currency-error").hidden = Boolean(currency);
+      byId("name").setAttribute("aria-invalid", String(!name));
+      byId("currency").setAttribute("aria-invalid", String(!currency));
+      if (!name || !currency) {
+        byId(!name ? "name" : "currency").focus();
+        return;
+      }
+      created = true;
+      byId("setup-feedback").textContent = "Demo profile created. No second profile will be created.";
+      showSaved(name, currency, true);
+    });
+    byId("retry").addEventListener("click", () => {
+      byId("save-error").querySelector("strong").textContent = "Retry completed in this demo";
+      byId("save-error").querySelector("p").textContent = "Sample details were retained. No real storage operation was performed.";
+      showSaved("Alex", "INR", false);
+    });
+  </script>
+</body>
+</html>
