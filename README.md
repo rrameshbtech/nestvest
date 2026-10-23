@@ -21,6 +21,18 @@ backup/export/import are not implemented.
 ./gradlew :app:installDebug
 ```
 
+### Git hooks
+
+Enable the checked-in hooks once per clone:
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+The pre-commit and pre-push hooks both compile the debug app, run Android lint, and
+run unit tests. Connected instrumentation tests remain a separate step because they
+require a running emulator or connected device.
+
 Launch NestVest from the device launcher or run the app configuration in Android
 Studio. `:app:assembleRelease` builds a minified, unsigned release APK; configure
 release signing outside version control before distributing.
