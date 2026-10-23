@@ -74,8 +74,15 @@ class ExpenseDesignTest {
         compose.setContent { NestVestTheme { ExpenseSummaryCard(expense) } }
         compose.onNodeWithTag("expense-summary").assertExists()
         compose.onAllNodesWithTag("expense-detail-pill", useUnmergedTree = true).assertCountEquals(3)
+        compose.onNodeWithText("At • Corner tea shop").assertExists()
         val image = compose.onNodeWithTag("expense-summary").captureToImage().toPixelMap()
         assertEquals(Color(0xFFF4F7F1), image[image.width / 2, 3])
+    }
+
+    @Test fun missingVendorPillKeepsItsPlaceholderWithoutPrefix() {
+        compose.setContent { NestVestTheme { ExpenseSummaryCard(expense.copy(vendor = null), compact = true) } }
+        compose.onNodeWithText("No place yet").assertExists()
+        compose.onNodeWithText("At • No place yet").assertDoesNotExist()
     }
 
     @Test fun shortDetailViewportKeepsSummaryAndDoneVisibleWhileFormScrolls() {

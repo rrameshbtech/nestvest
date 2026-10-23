@@ -43,6 +43,7 @@
     <string name="expense_invalid_vendor">Use at most 80 characters for the place.</string>
     <string name="expense_cleanup_pending">Change saved. Receipt cleanup is pending and will be retried.</string>
     <string name="expense_no_vendor">No place yet</string>
+    <string name="expense_vendor_pill">At • %1$s</string>
     <string name="expense_no_category">No category yet</string>
     <string name="expense_no_receipt">No receipt</string>
     <string name="expense_receipt_attached">Receipt attached</string>

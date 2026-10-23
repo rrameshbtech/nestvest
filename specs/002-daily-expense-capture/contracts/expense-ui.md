@@ -54,6 +54,8 @@ specification and this contract govern functional behavior.
 - Detail screen keeps the selected expense's currency-formatted amount and local
   capture date/time visible while details are edited.
 - Saved vendor, category, and receipt state are distinguishable from absent details.
+- A saved vendor pill reads **At • {vendor}**; an absent vendor keeps **No place yet**
+  without the prefix.
 - Vendor edits are draft text while focused. Trim and persist the vendor when the field
   loses focus or the user explicitly leaves the detail screen; blank text clears the
   vendor. Choosing **Done for now** while the vendor field is focused confirms it by

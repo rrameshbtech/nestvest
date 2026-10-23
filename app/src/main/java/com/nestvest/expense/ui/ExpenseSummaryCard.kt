@@ -48,7 +48,8 @@ fun ExpenseSummaryCard(expense: Expense, compact: Boolean = false) {
                 fontSize = 34.sp, lineHeight = 38.sp, letterSpacing = (-1.5).sp, fontWeight = FontWeight.Medium)
             Text(expenseDate(expense), fontSize = 11.sp, color = ExpenseStyle.Muted)
             val pills: @Composable () -> Unit = {
-                SummaryPill(expense.vendor ?: stringResource(R.string.expense_no_vendor))
+                SummaryPill(expense.vendor?.let { stringResource(R.string.expense_vendor_pill, it) }
+                    ?: stringResource(R.string.expense_no_vendor))
                 SummaryPill(expense.category?.let { categoryLabel(it) } ?: stringResource(R.string.expense_no_category))
                 SummaryPill(stringResource(if (expense.receiptFileName == null) R.string.expense_no_receipt
                     else R.string.expense_receipt_attached))
