@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminder_title">Daily reminder</string>
+    <string name="reminder_eyebrow">YOUR PACE, YOUR CHOICE</string>
+    <string name="reminder_heading">Remembering\nis easier gently.</string>
+    <string name="reminder_description">A quiet end-of-day reminder can help with the little cash spends. Your expenses stay on this device.</string>
+    <string name="reminder_default_hint">Off until you choose to turn it on.</string>
+    <string name="reminder_time_label">Remind me around</string>
+    <string name="reminder_off">Reminders are off. Capture works either way.</string>
+    <string name="reminder_permission_note">Reminders are local and optional. If notifications aren’t allowed, expense capture still works and we won’t keep asking.</string>
+    <string name="reminder_footnote">One gentle reminder at most each day.</string>
+    <string name="reminder_enable">Daily expense reminders</string>
+    <string name="reminder_time">Reminder time: %1$s</string>
+    <string name="reminder_choose_time">Choose a local time</string>
+    <string name="reminder_approximate">Delivery is approximate and follows your local time. Your device may delay reminders to save battery.</string>
+    <string name="reminder_unavailable">Notifications are unavailable. Allow notifications in system settings to receive reminders. Expense capture still works.</string>
+    <string name="reminder_open_settings">Open notification settings</string>
+    <string name="reminder_storage_error">Could not save or load reminder settings. Please try again.</string>
+    <string name="reminder_schedule_error">Your preference is saved, but the reminder could not be scheduled. Please retry.</string>
+    <string name="reminder_retry">Retry</string>
+    <string name="reminder_back">Back to expenses</string>
+    <string name="reminder_confirm">Confirm</string>
+    <string name="reminder_cancel">Cancel</string>
+    <string name="reminder_channel">Gentle daily reminders</string>
+    <string name="reminder_notification_title">A moment for your expenses</string>
+    <string name="reminder_notification_body">Capture an expense whenever you are ready.</string>
+</resources>

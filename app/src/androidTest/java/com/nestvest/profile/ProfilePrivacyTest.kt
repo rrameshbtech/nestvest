@@ -23,9 +23,13 @@ class ProfilePrivacyTest {
         assertFalse(info.requestedPermissions.orEmpty().contains(Manifest.permission.INTERNET))
         assertFalse(info.requestedPermissions.orEmpty().contains(Manifest.permission.ACCESS_NETWORK_STATE))
         assertTrue(info.providers.orEmpty().none { it.exported })
-        assertTrue(info.services.orEmpty().none { it.exported })
+        assertTrue(info.services.orEmpty().filter { it.exported }.all {
+            it.name == "androidx.work.impl.background.systemjob.SystemJobService" &&
+                it.permission == "android.permission.BIND_JOB_SERVICE"
+        })
         assertTrue(info.receivers.orEmpty().filter { it.exported }.all {
-            it.name == "androidx.profileinstaller.ProfileInstallReceiver" && it.permission == Manifest.permission.DUMP
+            it.name in setOf("androidx.profileinstaller.ProfileInstallReceiver",
+                "androidx.work.impl.diagnostics.DiagnosticsReceiver") && it.permission == Manifest.permission.DUMP
         })
         // These two activities are supplied only by the debug preview/test-manifest dependencies.
         val allowedActivities = setOf("com.nestvest.MainActivity",
@@ -49,12 +53,14 @@ class ProfilePrivacyTest {
             while (xml.eventType != XmlPullParser.END_DOCUMENT) {
                 if (xml.eventType == XmlPullParser.START_TAG && xml.name == "include") {
                     includes++
-                    assertEquals("database", xml.getAttributeValue(null, "domain"))
+                    val domain = xml.getAttributeValue(null, "domain")
+                    assertTrue(domain == "database" ||
+                        (domain == "file" && xml.getAttributeValue(null, "path") == "receipts/"))
                     assertEquals("deviceToDeviceTransfer", xml.getAttributeValue(null, "requireFlags"))
                 }
                 xml.next()
             }
-            assertEquals(if (Build.VERSION.SDK_INT >= 28) 1 else 0, includes)
+            assertEquals(if (Build.VERSION.SDK_INT >= 28) 2 else 0, includes)
         }
         context.resources.getXml(R.xml.data_extraction_rules).use { xml ->
             var section = ""
@@ -67,14 +73,16 @@ class ProfilePrivacyTest {
                     if (section == "cloud-backup") assertNotEquals("include", xml.name)
                     if (section == "device-transfer" && xml.name == "include") {
                         transfers++
-                        assertEquals("database", xml.getAttributeValue(null, "domain"))
+                        val domain = xml.getAttributeValue(null, "domain")
+                        assertTrue(domain == "database" ||
+                            (domain == "file" && xml.getAttributeValue(null, "path") == "receipts/"))
                     }
                 }
                 xml.next()
             }
             assertTrue(excluded.containsAll(listOf("root", "file", "database", "sharedpref", "external",
                 "device_root", "device_file", "device_database", "device_sharedpref")))
-            assertEquals(1, transfers)
+            assertEquals(2, transfers)
         }
     }
 }

@@ -21,7 +21,7 @@ class ProfilePersistenceTest {
         var db = ProfileDatabase.open(context, name)
         try {
             RoomProfileRepository(db).create(ProfileDraft("Mira", "INR"))
-            db.openHelper.writableDatabase.version = 2
+            db.openHelper.writableDatabase.version = 3
             db.close()
             db = ProfileDatabase.open(context, name)
             val repo = RoomProfileRepository(db)

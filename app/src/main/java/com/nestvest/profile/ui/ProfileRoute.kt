@@ -14,9 +14,10 @@ import com.nestvest.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileRoute(viewModel: ProfileViewModel) {
+fun ProfileRoute(viewModel: ProfileViewModel, savedContent: (@Composable (com.nestvest.profile.domain.PrimaryProfile) -> Unit)? = null) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    ProfileContent(state, viewModel::accept)
+    if (state.stage == ProfileStage.SAVED && savedContent != null) savedContent(checkNotNull(state.profile))
+    else ProfileContent(state, viewModel::accept)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

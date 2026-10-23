@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>NestVest · Phase 2 UI mockups</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202521;
+      --muted: #626a62;
+      --paper: #fafbf7;
+      --line: #dce1d8;
+      --green: #3d5844;
+      --pale: #e7eee2;
+      --error: #793e2d;
+      --error-bg: #f7eeea;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9ece5; color: var(--ink); font-family: system-ui, -apple-system, sans-serif; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #53754e; outline-offset: 3px; }
+    .board { max-width: 1800px; margin: auto; padding: 48px 32px; }
+    .masthead { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-bottom: 30px; border-bottom: 1px solid #cbd2c6; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { font-size: clamp(28px, 4vw, 42px); font-weight: 500; letter-spacing: -.04em; margin: 10px 0; }
+    .intro { max-width: 600px; color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0; }
+    .tag { border: 1px solid #bdc8b8; padding: 9px 12px; border-radius: 4px; white-space: nowrap; font-size: 12px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 32px 24px; margin-top: 32px; }
+    .specimen { min-width: 0; }
+    .caption { display: flex; align-items: baseline; gap: 10px; margin: 0 auto 14px; max-width: 390px; }
+    .caption span { color: #697361; font-size: 11px; font-weight: 700; }
+    .caption h2 { font-size: 14px; font-weight: 550; margin: 0; }
+    .phone { width: 100%; max-width: 390px; aspect-ratio: 390 / 844; margin: auto; border: 1px solid #aeb8a7; border-radius: 30px; background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+    .status { padding: 18px 24px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 650; }
+    .status-icons { display: flex; gap: 7px; align-items: center; }
+    .battery { width: 19px; height: 10px; border: 1px solid currentColor; border-radius: 2px; padding: 1px; }
+    .battery::after { content: ""; display: block; width: 80%; height: 100%; background: currentColor; }
+    .appbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; gap: 9px; align-items: center; font-size: 16px; font-weight: 650; letter-spacing: -.04em; }
+    .local { display: flex; align-items: center; gap: 5px; color: var(--green); font-size: 10px; }
+    .content { flex: 1; overflow-y: auto; padding: 22px 22px 16px; }
+    .step { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; }
+    h3 { font-size: 29px; font-weight: 500; line-height: 1.14; letter-spacing: -.045em; margin: 10px 0 8px; }
+    p { font-size: 12px; line-height: 1.6; }
+    .sub { color: var(--muted); margin: 0 0 18px; }
+    .amount-display { min-height: 112px; display: grid; align-content: center; margin: 16px 0 14px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: #f5f7f1; }
+    .amount-display .currency-label { color: var(--muted); font-size: 11px; }
+    .amount-display output { display: block; overflow: hidden; font-size: clamp(32px, 9vw, 43px); font-weight: 500; letter-spacing: -.055em; white-space: nowrap; }
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .key { min-height: 49px; border: 1px solid var(--line); border-radius: 9px; background: transparent; color: var(--ink); font-size: 18px; }
+    .key:hover, .period:hover, .secondary:hover { background: #eef2ea; }
+    .key.utility { font-size: 14px; color: var(--green); }
+    .primary { width: 100%; min-height: 49px; border: 0; border-radius: 8px; background: var(--ink); color: white; font-size: 13px; font-weight: 600; padding: 12px; }
+    .primary:hover { background: #354d3b; }
+    .secondary { min-height: 44px; border: 1px solid #b8c1b2; border-radius: 8px; background: transparent; color: var(--ink); font-size: 12px; font-weight: 600; padding: 10px 12px; }
+    .subtle-action { display: block; min-height: 38px; margin: 2px auto 0; border: 0; background: transparent; color: var(--green); font-size: 11px; font-weight: 600; padding: 8px 12px; }
+    .subtle-action:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .appbar-actions { display: flex; align-items: center; gap: 12px; }
+    .settings-button { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--green); font-size: 17px; }
+    .settings-button:hover { background: #eef2ea; }
+    .footer { padding: 8px 22px 5px; }
+    .footnote { color: var(--muted); font-size: 10px; text-align: center; margin: 9px 0; }
+    .homebar { height: 4px; width: 104px; border-radius: 8px; background: #252b24; margin: 10px auto 4px; }
+    .note { max-width: 390px; margin: 14px auto 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .privacy-line { display: flex; gap: 7px; align-items: center; color: var(--muted); font-size: 10px; margin-top: 12px; }
+    .feedback { min-height: 20px; color: var(--muted); font-size: 11px; margin: 9px 0 0; }
+    .feedback.error { color: var(--error); }
+    .periods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 16px 0 12px; }
+    .period { min-height: 40px; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: var(--muted); font-size: 11px; }
+    .period[aria-pressed="true"] { border-color: var(--green); background: var(--pale); color: var(--ink); font-weight: 650; }
+    .history-heading { display: flex; justify-content: space-between; align-items: end; gap: 10px; }
+    .history-heading h3 { margin-bottom: 0; }
+    .history-heading small { color: var(--muted); font-size: 10px; }
+    .total-line { display: flex; justify-content: space-between; align-items: baseline; padding: 13px 0 10px; border-bottom: 1px solid var(--line); }
+    .total-line span { color: var(--muted); font-size: 11px; }
+    .total-line strong { font-size: 17px; font-weight: 600; }
+    .expense-list { display: grid; gap: 8px; padding-top: 10px; }
+    .expense-item { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: transparent; color: var(--ink); }
+    .expense-item:hover { background: #f2f5ef; border-color: #b9c5b2; }
+    .expense-mark { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; background: var(--pale); color: var(--green); font-size: 13px; }
+    .expense-copy { min-width: 0; flex: 1; }
+    .expense-copy strong { display: block; font-size: 12px; font-weight: 600; }
+    .expense-copy small { display: block; overflow: hidden; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+    .expense-value { font-size: 13px; font-weight: 650; white-space: nowrap; }
+    .empty { padding: 28px 12px; text-align: center; color: var(--muted); border: 1px dashed #bdc8b8; border-radius: 9px; font-size: 12px; line-height: 1.6; }
+    .detail-card { border: 1px solid #cbd5c5; border-radius: 12px; background: #f4f7f1; padding: 16px; margin: 16px 0 18px; }
+    .detail-amount { font-size: 34px; line-height: 1.05; letter-spacing: -.05em; font-weight: 550; }
+    .detail-date { color: var(--muted); font-size: 11px; margin-top: 6px; }
+    .detail-lines { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 13px; }
+    .detail-pill { padding: 6px 8px; border-radius: 99px; border: 1px solid #cbd5c5; color: var(--muted); font-size: 10px; }
+    .field { display: block; margin: 16px 0; }
+    .label { display: block; font-size: 11px; font-weight: 650; margin-bottom: 7px; }
+    input, select { width: 100%; min-height: 44px; border: 1px solid #b8c1b2; border-radius: 8px; padding: 10px 11px; background: transparent; color: var(--ink); font-size: 12px; }
+    input::placeholder { color: #70786f; }
+    .input-row { display: flex; gap: 8px; align-items: center; }
+    .input-row input { flex: 1; min-width: 0; }
+    .input-row button { white-space: nowrap; }
+    fieldset { padding: 0; margin: 17px 0; border: 0; }
+    legend { font-size: 11px; font-weight: 650; margin-bottom: 9px; }
+    .categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+    .category { min-height: 41px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--ink); font-size: 11px; }
+    .category[aria-pressed="true"] { border-color: var(--green); background: var(--pale); font-weight: 650; }
+    .receipt-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .receipt-row span { color: var(--muted); font-size: 11px; }
+    .delete-button { width: 100%; min-height: 42px; margin-top: 10px; border: 0; background: transparent; color: var(--error); font-size: 11px; font-weight: 600; }
+    details.amount-edit { margin: 14px 0; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+    details.amount-edit summary { min-height: 42px; display: flex; align-items: center; cursor: pointer; color: var(--green); font-size: 11px; font-weight: 650; }
+    details.amount-edit form { padding: 4px 0 8px; }
+    .settings-card { border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-top: 18px; }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .settings-row strong { display: block; font-size: 12px; }
+    .settings-row small { display: block; color: var(--muted); font-size: 10px; line-height: 1.5; margin-top: 4px; }
+    .switch { position: relative; flex: 0 0 48px; width: 48px; height: 28px; padding: 0; border: 1px solid #9eaa98; border-radius: 99px; background: #e7eae3; }
+    .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #697361; transition: transform .15s; }
+    .switch[aria-checked="true"] { background: var(--green); border-color: var(--green); }
+    .switch[aria-checked="true"]::after { transform: translateX(20px); background: white; }
+    .time-field { margin: 18px 0 8px; }
+    .permission-note { color: var(--muted); font-size: 10px; line-height: 1.6; padding-top: 12px; border-top: 1px solid var(--line); margin-top: 16px; }
+    dialog { width: min(340px, calc(100% - 36px)); border: 1px solid #b8c1b2; border-radius: 14px; padding: 20px; background: var(--paper); color: var(--ink); box-shadow: 0 12px 40px #2025212b; }
+    dialog::backdrop { background: #20252166; }
+    dialog h4 { margin: 0 0 8px; font-size: 19px; font-weight: 550; }
+    dialog p { color: var(--muted); }
+    .dialog-actions { display: flex; gap: 8px; margin-top: 18px; }
+    .dialog-actions button { flex: 1; }
+    [hidden] { display: none !important; }
+    .board-footer { margin-top: 36px; padding-top: 20px; border-top: 1px solid #cbd2c6; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    @media (max-width: 600px) {
+      .board { padding: 24px 16px; }
+      .masthead { display: block; }
+      .tag { display: inline-block; margin-top: 16px; }
+      .gallery { gap: 30px; }
+      .phone { min-height: 760px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">NestVest · Phase 2</div>
+        <h1>Everyday spending, remembered.</h1>
+        <p class="intro">A quick amount-first capture, a familiar view of today's spending, and a calm way to add details whenever it suits you.</p>
+      </div>
+      <div class="tag">Interactive design prototype · 390 × 844 reference</div>
+    </header>
+
+    <div class="gallery">
+      <section class="specimen" id="capture-screen" aria-labelledby="capture-label">
+        <div class="caption"><span>01 /</span><h2 id="capture-label">Capture in a moment</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand">⌂ NestVest</div><span class="local">● On this device</span></div>
+          <div class="content">
+            <div class="step">A little more mindful, every day</div>
+            <h3>What did you<br>spend?</h3>
+            <p class="sub">Just the amount is enough. Add the rest later, if you like.</p>
+            <div class="amount-display">
+              <span class="currency-label">INR · Indian rupee</span>
+              <output id="amount-output" aria-live="polite" aria-label="Expense amount">₹0</output>
+            </div>
+            <div class="keypad" aria-label="Amount keypad">
+              <button class="key" type="button" data-key="1" aria-label="1">1</button>
+              <button class="key" type="button" data-key="2" aria-label="2">2</button>
+              <button class="key" type="button" data-key="3" aria-label="3">3</button>
+              <button class="key" type="button" data-key="4" aria-label="4">4</button>
+              <button class="key" type="button" data-key="5" aria-label="5">5</button>
+              <button class="key" type="button" data-key="6" aria-label="6">6</button>
+              <button class="key" type="button" data-key="7" aria-label="7">7</button>
+              <button class="key" type="button" data-key="8" aria-label="8">8</button>
+              <button class="key" type="button" data-key="9" aria-label="9">9</button>
+              <button class="key utility" type="button" data-key="." aria-label="Decimal point">.</button>
+              <button class="key" type="button" data-key="0" aria-label="0">0</button>
+              <button class="key utility" type="button" id="backspace" aria-label="Delete last digit">⌫</button>
+            </div>
+            <p id="capture-feedback" class="feedback" role="status" aria-live="polite"></p>
+            <p class="privacy-line">⌑ Saved on this device · No internet needed</p>
+          </div>
+          <div class="footer">
+            <button class="primary" id="save-expense" type="button">Save expense</button>
+            <button class="subtle-action" id="save-and-enrich" type="button">Add details now <span aria-hidden="true">→</span></button>
+            <p class="footnote">No category, vendor, or receipt required.</p>
+            <div class="homebar" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="note">Amount first. One clear action saves it locally; optional context never gets in the way.</p>
+      </section>
+
+      <section class="specimen" id="history-screen" aria-labelledby="history-label">
+        <div class="caption"><span>02 /</span><h2 id="history-label">Find one to fill in later</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar">
+            <div class="brand">⌂ NestVest</div>
+            <div class="appbar-actions">
+              <span class="local">● On this device</span>
+              <button class="settings-button" id="reminder-settings" type="button" aria-label="Reminder settings" title="Reminder settings">⚙</button>
+            </div>
+          </div>
+          <div class="content">
+            <div class="step">Your spending</div>
+            <div class="history-heading"><h3 id="history-title">Today</h3><small id="history-date"></small></div>
+            <div class="periods" role="group" aria-label="Expense history period">
+              <button class="period" type="button" data-period="day" aria-pressed="true">Today</button>
+              <button class="period" type="button" data-period="week" aria-pressed="false">This week</button>
+              <button class="period" type="button" data-period="month" aria-pressed="false">This month</button>
+            </div>
+            <div class="total-line"><span id="history-count">Today's total · 0 expenses</span><strong id="history-total">₹0</strong></div>
+            <div class="expense-list" id="expense-list" aria-live="polite"></div>
+            <p id="history-feedback" class="feedback" role="status"></p>
+          </div>
+          <div class="footer">
+            <button class="secondary" id="history-capture" type="button" style="width:100%">＋ Add an expense</button>
+            <p class="footnote">Choose a card to review or add details.</p>
+            <div class="homebar" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="note">Today's entries are ready when you return. Switch to this week or month, then choose by amount, time, or details.</p>
+      </section>
+
+      <section class="specimen" id="details-screen" aria-labelledby="details-label">
+        <div class="caption"><span>03 /</span><h2 id="details-label">A clear card, as you add details</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand">⌂ NestVest</div><button class="secondary" id="back-history" type="button">‹ History</button></div>
+          <div class="content" id="detail-content">
+            <div class="step">One expense · details are optional</div>
+            <h3>Make it yours,<br>if you want.</h3>
+            <div class="detail-card" aria-label="Expense summary">
+              <div class="detail-amount" id="detail-amount">₹240.00</div>
+              <div class="detail-date" id="detail-date">Today · 9:41 AM</div>
+              <div class="detail-lines" id="detail-pills"></div>
+            </div>
+            <p class="sub">Your amount and time stay in view, with each detail you've saved.</p>
+            <details class="amount-edit">
+              <summary>Correct the amount</summary>
+              <form id="amount-edit-form">
+                <label class="field" for="corrected-amount">
+                  <span class="label">New amount · INR</span>
+                  <span class="input-row"><input id="corrected-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required><button class="secondary" type="submit">Save</button></span>
+                </label>
+                <p class="hint">This corrects the selected expense; it won't create another one.</p>
+              </form>
+            </details>
+            <label class="field">
+              <span class="label">Where was it? <span style="color:var(--muted);font-weight:400">· optional</span></span>
+              <input id="vendor-input" type="text" maxlength="80" placeholder="Add a shop or place" autocomplete="off" aria-describedby="vendor-hint">
+              <span class="hint" id="vendor-hint">Saved when you leave this field.</span>
+            </label>
+            <fieldset>
+              <legend>Choose a Kakeibo category · optional</legend>
+              <div class="categories" id="categories">
+                <button type="button" class="category" data-category="Needs" aria-pressed="false">Needs</button>
+                <button type="button" class="category" data-category="Wants" aria-pressed="false">Wants</button>
+                <button type="button" class="category" data-category="Culture" aria-pressed="false">Culture</button>
+                <button type="button" class="category" data-category="Unexpected" aria-pressed="false">Unexpected</button>
+              </div>
+            </fieldset>
+            <div class="receipt-row"><span id="receipt-label">Receipt · optional</span><button class="secondary" id="receipt-button" type="button">Attach a receipt</button></div>
+            <p id="detail-feedback" class="feedback" role="status" aria-live="polite">Each detail saves when you confirm it.</p>
+            <button class="delete-button" id="delete-expense" type="button">Delete this expense…</button>
+          </div>
+          <div class="footer">
+            <button class="primary" id="done-details" type="button">Done for now</button>
+            <p class="footnote">Confirmed details stay saved if you leave.</p>
+            <div class="homebar" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="note">The summary card identifies the expense. Save a vendor, choose a category, or add a receipt independently—no finish-all step.</p>
+      </section>
+
+      <section class="specimen" id="reminder-screen" aria-labelledby="reminder-label">
+        <div class="caption"><span>04 /</span><h2 id="reminder-label">A nudge, only if you ask</h2></div>
+        <div class="phone">
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-icons">▰ ▴ <span class="battery"></span></span></div>
+          <div class="appbar"><div class="brand">⌂ NestVest</div><span class="local">● On this device</span></div>
+          <div class="content">
+            <div class="step">Your pace, your choice</div>
+            <h3>Remembering<br>is easier gently.</h3>
+            <p class="sub">A quiet end-of-day reminder can help with the little cash spends. Your expenses stay on this device.</p>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div><strong>Daily reminder</strong><small>Off until you choose to turn it on.</small></div>
+                <button class="switch" id="reminder-switch" type="button" role="switch" aria-checked="false" aria-label="Daily expense reminder"></button>
+              </div>
+              <label class="field time-field" for="reminder-time">
+                <span class="label">Remind me around</span>
+                <input id="reminder-time" type="time" value="20:30" disabled>
+              </label>
+              <p id="reminder-feedback" class="feedback" role="status" aria-live="polite">Reminders are off. Capture works either way.</p>
+              <p class="permission-note">Reminders are local and optional. If notifications aren't allowed, expense capture still works and we won't keep asking.</p>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="secondary" id="reminder-history" type="button" style="width:100%">Back to expenses</button>
+            <p class="footnote">One gentle reminder at most each day.</p>
+            <div class="homebar" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="note">Off by default. A user-controlled time, no guilt, no interruption, and no dependency on notification permission.</p>
+      </section>
+    </div>
+
+    <footer class="board-footer">
+      Interactive design prototype · No external fonts, libraries, or network requests.<br>
+      Uses sample expenses held in memory only. It does not implement secure storage, actual image selection, notification delivery, or persistent data. Reloading resets the demo. All currency and dates are illustrative.
+    </footer>
+  </main>
+
+  <dialog id="delete-dialog" aria-labelledby="delete-title">
+    <h4 id="delete-title">Remove this expense?</h4>
+    <p>This removes the selected expense from this demo's history. You can cancel and leave it unchanged.</p>
+    <div class="dialog-actions">
+      <button class="secondary" id="cancel-delete" type="button">Keep expense</button>
+      <button class="primary" id="confirm-delete" type="button">Delete expense</button>
+    </div>
+  </dialog>
+
+  <script>
+    const byId = id => document.getElementById(id);
+    const currency = "INR";
+    const money = value => new Intl.NumberFormat(undefined, {
+      style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2
+    }).format(value);
+    const localDate = (offset, hour, minute) => {
+      const date = new Date();
+      date.setDate(date.getDate() + offset);
+      date.setHours(hour, minute, 0, 0);
+      return date;
+    };
+    const dateLabel = date => new Intl.DateTimeFormat(undefined, {
+      weekday: "short", month: "short", day: "numeric"
+    }).format(date);
+    const timeLabel = date => new Intl.DateTimeFormat(undefined, {
+      hour: "numeric", minute: "2-digit"
+    }).format(date);
+    const startOfWeek = date => {
+      const start = new Date(date);
+      start.setHours(0, 0, 0, 0);
+      start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+      return start;
+    };
+    const expenses = [
+      { id: "e-1", amount: 240, date: localDate(0, 9, 41), vendor: "Corner tea shop", category: "Culture", receipt: false },
+      { id: "e-2", amount: 1280, date: localDate(0, 8, 16), vendor: "", category: "", receipt: false },
+      { id: "e-3", amount: 85, date: localDate(0, 7, 52), vendor: "Metro", category: "Needs", receipt: false },
+      { id: "e-4", amount: 670, date: localDate(-2, 18, 5), vendor: "Market", category: "Needs", receipt: true },
+      { id: "e-5", amount: 450, date: localDate(-5, 13, 22), vendor: "", category: "Wants", receipt: false },
+      { id: "e-6", amount: 2200, date: localDate(-12, 11, 10), vendor: "Pharmacy", category: "Unexpected", receipt: false }
+    ];
+    let amountText = "";
+    let selectedPeriod = "day";
+    let selectedExpenseId = expenses[0].id;
+    let nextId = 7;
+    let remindersEnabled = false;
+
+    function renderAmount() {
+      const amount = Number(amountText || 0);
+      byId("amount-output").textContent = money(amount);
+    }
+
+    function addKey(key) {
+      if (key === "." && amountText.includes(".")) return;
+      if (amountText.length >= 12) return;
+      amountText += key;
+      renderAmount();
+      byId("capture-feedback").textContent = "";
+      byId("capture-feedback").classList.remove("error");
+    }
+
+    document.querySelector(".keypad").addEventListener("click", event => {
+      const button = event.target.closest("[data-key]");
+      if (button) addKey(button.dataset.key);
+    });
+    byId("backspace").addEventListener("click", () => {
+      amountText = amountText.slice(0, -1);
+      renderAmount();
+    });
+
+    function setPeriod(period) {
+      selectedPeriod = period;
+      document.querySelectorAll(".period").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.period === period));
+      });
+      renderHistory();
+    }
+
+    function periodExpenses() {
+      const now = new Date();
+      return expenses
+        .filter(expense => {
+          if (selectedPeriod === "day") return expense.date.toDateString() === now.toDateString();
+          if (selectedPeriod === "week") return expense.date >= startOfWeek(now);
+          return expense.date.getFullYear() === now.getFullYear() && expense.date.getMonth() === now.getMonth();
+        })
+        .sort((a, b) => b.date - a.date);
+    }
+
+    function renderHistory() {
+      const list = byId("expense-list");
+      const filtered = periodExpenses();
+      const labels = { day: "Today", week: "This week's total", month: "This month's total" };
+      const titles = { day: "Today", week: "This week", month: "This month" };
+      byId("history-title").textContent = titles[selectedPeriod];
+      byId("history-date").textContent = selectedPeriod === "day"
+        ? new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date())
+        : "";
+      byId("history-count").textContent = `${labels[selectedPeriod]} · ${filtered.length} ${filtered.length === 1 ? "expense" : "expenses"}`;
+      byId("history-total").textContent = money(filtered.reduce((sum, expense) => sum + expense.amount, 0));
+      list.replaceChildren();
+      byId("history-feedback").textContent = "";
+      if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Nothing recorded in this period yet. Your next expense can start here.";
+        list.append(empty);
+        return;
+      }
+      for (const expense of filtered) {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "expense-item";
+        const dayAndTime = selectedPeriod === "day"
+          ? timeLabel(expense.date)
+          : `${dateLabel(expense.date)} · ${timeLabel(expense.date)}`;
+        item.setAttribute("aria-label", `${money(expense.amount)}, ${dayAndTime}${expense.vendor ? `, ${expense.vendor}` : ""}. Open expense details`);
+        const mark = document.createElement("span");
+        mark.className = "expense-mark";
+        mark.setAttribute("aria-hidden", "true");
+        mark.textContent = expense.category ? expense.category.slice(0, 1) : "·";
+        const copy = document.createElement("span");
+        copy.className = "expense-copy";
+        const strong = document.createElement("strong");
+        strong.textContent = expense.vendor || "Expense";
+        const small = document.createElement("small");
+        small.textContent = `${dayAndTime} · ${expense.category || "No category yet"}${expense.receipt ? " · Receipt" : ""}`;
+        copy.append(strong, small);
+        const value = document.createElement("span");
+        value.className = "expense-value";
+        value.textContent = money(expense.amount);
+        item.append(mark, copy, value);
+        item.addEventListener("click", () => openExpense(expense.id));
+        list.append(item);
+      }
+    }
+
+    function currentExpense() {
+      return expenses.find(expense => expense.id === selectedExpenseId);
+    }
+
+    function renderDetails() {
+      const expense = currentExpense();
+      if (!expense) {
+        byId("detail-amount").textContent = "Expense removed";
+        byId("detail-date").textContent = "";
+        byId("detail-pills").textContent = "This expense is no longer in your history.";
+        byId("vendor-input").value = "";
+        byId("vendor-input").disabled = true;
+        byId("corrected-amount").disabled = true;
+        byId("receipt-button").disabled = true;
+        document.querySelectorAll(".category").forEach(button => { button.disabled = true; });
+        return;
+      }
+      byId("vendor-input").disabled = false;
+      byId("corrected-amount").disabled = false;
+      byId("receipt-button").disabled = false;
+      document.querySelectorAll(".category").forEach(button => { button.disabled = false; });
+      byId("detail-amount").textContent = money(expense.amount);
+      byId("detail-date").textContent = `${dateLabel(expense.date)} · ${timeLabel(expense.date)}`;
+      const pills = byId("detail-pills");
+      pills.replaceChildren();
+      const detailLabels = [
+        expense.vendor ? `At · ${expense.vendor}` : "No place yet",
+        expense.category || "No category yet",
+        expense.receipt ? "Receipt attached" : "No receipt"
+      ];
+      detailLabels.forEach(label => {
+        const pill = document.createElement("span");
+        pill.className = "detail-pill";
+        pill.textContent = label;
+        pills.append(pill);
+      });
+      byId("vendor-input").value = expense.vendor;
+      byId("corrected-amount").value = expense.amount.toFixed(2);
+      document.querySelectorAll(".category").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.category === expense.category));
+      });
+      byId("receipt-label").textContent = expense.receipt ? "Receipt added · sample only" : "Receipt · optional";
+      byId("receipt-button").textContent = expense.receipt ? "Remove" : "Attach a receipt";
+      byId("detail-feedback").textContent = "Each detail saves when you confirm it.";
+      byId("detail-feedback").classList.remove("error");
+    }
+
+    function openExpense(id) {
+      selectedExpenseId = id;
+      renderDetails();
+      byId("detail-content").scrollTop = 0;
+      byId("detail-label")?.focus();
+    }
+
+    function showFeedback(id, message, isError = false) {
+      const element = byId(id);
+      element.textContent = message;
+      element.classList.toggle("error", isError);
+    }
+
+    function showSpecimen(id) {
+      byId(id).scrollIntoView({ behavior: "instant", block: "start" });
+    }
+
+    function saveExpense(continueToDetails) {
+      const value = Number(amountText);
+      if (!amountText || !Number.isFinite(value) || value <= 0) {
+        showFeedback("capture-feedback", "Enter an amount greater than zero to save.", true);
+        return;
+      }
+      const expense = {
+        id: `e-${nextId++}`,
+        amount: value,
+        date: new Date(),
+        vendor: "",
+        category: "",
+        receipt: false
+      };
+      expenses.push(expense);
+      amountText = "";
+      renderAmount();
+      setPeriod("day");
+      renderHistory();
+      byId("capture-feedback").classList.remove("error");
+      if (continueToDetails) {
+        selectedExpenseId = expense.id;
+        renderDetails();
+        showSpecimen("details-screen");
+        byId("vendor-input").focus({ preventScroll: true });
+      } else {
+        showFeedback("capture-feedback", "Saved on this device. Add details now or whenever you return.");
+      }
+    }
+
+    byId("save-expense").addEventListener("click", () => saveExpense(false));
+    byId("save-and-enrich").addEventListener("click", () => saveExpense(true));
+
+    byId("vendor-input").addEventListener("blur", () => {
+      const expense = currentExpense();
+      if (!expense || byId("vendor-input").disabled) return;
+      const vendor = byId("vendor-input").value.trim();
+      if (expense.vendor === vendor) return;
+      expense.vendor = vendor;
+      renderDetails();
+      renderHistory();
+      showFeedback("detail-feedback", vendor
+        ? "Place saved. You can stop here; it's safe."
+        : "Place removed. Other details are unchanged.");
+    });
+    byId("vendor-input").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        byId("vendor-input").blur();
+      }
+    });
+
+    byId("amount-edit-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const expense = currentExpense();
+      const input = byId("corrected-amount");
+      const amount = Number(input.value);
+      if (!expense || !input.reportValidity() || !Number.isFinite(amount) || amount <= 0) return;
+      expense.amount = amount;
+      renderDetails();
+      renderHistory();
+      showFeedback("detail-feedback", "Amount corrected. This remains the same expense.");
+    });
+
+    byId("categories").addEventListener("click", event => {
+      const button = event.target.closest("[data-category]");
+      const expense = currentExpense();
+      if (!button || !expense) return;
+      expense.category = expense.category === button.dataset.category ? "" : button.dataset.category;
+      renderDetails();
+      showFeedback("detail-feedback", expense.category ? `${expense.category} saved. You can stop here; it's safe.` : "Category removed. Other details are unchanged.");
+    });
+
+    byId("receipt-button").addEventListener("click", () => {
+      const expense = currentExpense();
+      if (!expense) return;
+      expense.receipt = !expense.receipt;
+      renderDetails();
+      showFeedback("detail-feedback", expense.receipt ? "Sample receipt attached in this demo. You can stop here; it's safe." : "Receipt removed. Other details are unchanged.");
+    });
+
+    byId("delete-expense").addEventListener("click", () => byId("delete-dialog").showModal());
+    byId("cancel-delete").addEventListener("click", () => byId("delete-dialog").close());
+    byId("confirm-delete").addEventListener("click", () => {
+      const index = expenses.findIndex(expense => expense.id === selectedExpenseId);
+      if (index !== -1) expenses.splice(index, 1);
+      byId("delete-dialog").close();
+      showFeedback("history-feedback", "Expense deleted from this demo.");
+      renderHistory();
+    });
+
+    document.querySelectorAll(".period").forEach(button => {
+      button.addEventListener("click", () => setPeriod(button.dataset.period));
+    });
+    byId("back-history").addEventListener("click", () => {
+      renderHistory();
+      showSpecimen("history-screen");
+    });
+    byId("done-details").addEventListener("click", () => {
+      renderHistory();
+      byId("history-feedback").textContent = "All confirmed details are saved.";
+      showSpecimen("history-screen");
+    });
+    byId("history-capture").addEventListener("click", () => {
+      showSpecimen("capture-screen");
+      byId("amount-output").focus({ preventScroll: true });
+    });
+    byId("reminder-settings").addEventListener("click", () => showSpecimen("reminder-screen"));
+    byId("reminder-history").addEventListener("click", () => {
+      renderHistory();
+      showSpecimen("history-screen");
+    });
+
+    byId("reminder-switch").addEventListener("click", () => {
+      remindersEnabled = !remindersEnabled;
+      byId("reminder-switch").setAttribute("aria-checked", String(remindersEnabled));
+      byId("reminder-time").disabled = !remindersEnabled;
+      showFeedback("reminder-feedback", remindersEnabled
+        ? "Reminder enabled in this demo. Notification delivery isn't implemented."
+        : "Reminders are off. Capture works either way.");
+    });
+
+    renderAmount();
+    renderHistory();
+    renderDetails();
+  </script>
+</body>
+</html>
