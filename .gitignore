@@ -33,3 +33,15 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Local development outputs and credentials
+out/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+.env*
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
