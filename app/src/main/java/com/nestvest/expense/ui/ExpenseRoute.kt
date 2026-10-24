@@ -13,6 +13,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
@@ -25,12 +26,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.nestvest.expense.data.RoomExpenseRepository
+import com.nestvest.dashboard.ui.LocalDashboardHomeAction
 import com.nestvest.R
 import kotlinx.coroutines.delay
 
 @Composable
 fun ExpenseRoute(viewModel: ExpenseViewModel, repository: RoomExpenseRepository,
-    reminders: ReminderViewModel) {
+    reminders: ReminderViewModel, dashboardEntryScreen: ExpenseScreen = ExpenseScreen.CAPTURE,
+    onDashboardBack: (() -> Unit)? = null) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -46,9 +49,20 @@ fun ExpenseRoute(viewModel: ExpenseViewModel, repository: RoomExpenseRepository,
     LaunchedEffect(repository) {
         if (!repository.reconcileReceipts()) viewModel.cleanupPending()
     }
-    BackHandler(state.screen == ExpenseScreen.HISTORY) { viewModel.navigate(ExpenseScreen.CAPTURE) }
-    BackHandler(state.screen == ExpenseScreen.REMINDERS) { viewModel.navigate(ExpenseScreen.HISTORY) }
+    BackHandler(state.screen == ExpenseScreen.CAPTURE && onDashboardBack != null) { onDashboardBack?.invoke() }
+    BackHandler(state.screen == ExpenseScreen.HISTORY) {
+        if (dashboardEntryScreen == ExpenseScreen.HISTORY && onDashboardBack != null) onDashboardBack()
+        else viewModel.navigate(ExpenseScreen.CAPTURE)
+    }
+    BackHandler(state.screen == ExpenseScreen.REMINDERS) {
+        if (dashboardEntryScreen == ExpenseScreen.REMINDERS && onDashboardBack != null) onDashboardBack()
+        else viewModel.navigate(ExpenseScreen.HISTORY)
+    }
+    BackHandler(state.screen == ExpenseScreen.DETAIL) { viewModel.navigate(ExpenseScreen.HISTORY) }
     Surface {
+      CompositionLocalProvider(
+          LocalDashboardHomeAction provides onDashboardBack?.let { { it() } },
+      ) {
         Box(Modifier.fillMaxSize().safeDrawingPadding()) {
             when (state.screen) {
                 ExpenseScreen.CAPTURE -> ExpenseCaptureScreen(state, viewModel.profile.preferredCurrency,
@@ -94,8 +108,12 @@ fun ExpenseRoute(viewModel: ExpenseViewModel, repository: RoomExpenseRepository,
                         context.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
                             .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName))
                     },
-                    onBack = { viewModel.navigate(ExpenseScreen.HISTORY) })
+                    onBack = {
+                        if (dashboardEntryScreen == ExpenseScreen.REMINDERS && onDashboardBack != null) onDashboardBack()
+                        else viewModel.navigate(ExpenseScreen.HISTORY)
+                    })
             }
+          }
         }
     }
 }

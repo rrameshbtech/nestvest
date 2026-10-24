@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>NestVest · Phase 3 Dashboard mockup</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202521;
+      --muted: #626a62;
+      --paper: #fafbf7;
+      --line: #dce1d8;
+      --green: #3d5844;
+      --pale: #e7eee2;
+      --error: #793e2d;
+      --error-bg: #f7eeea;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9ece5; color: var(--ink); }
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid #53754e; outline-offset: 3px;
+    }
+    button:disabled { cursor: not-allowed; opacity: .62; }
+    .board { max-width: 1180px; margin: auto; padding: 40px 28px; }
+    .masthead { display: flex; justify-content: space-between; align-items: end; gap: 24px;
+      padding-bottom: 24px; border-bottom: 1px solid #cbd2c6; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 10px 0; font-size: clamp(28px, 4vw, 40px); font-weight: 500; letter-spacing: -.04em; }
+    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .tag { border: 1px solid #bdc8b8; border-radius: 4px; padding: 9px 12px; white-space: nowrap; font-size: 12px; }
+    .try-row { display: flex; align-items: center; gap: 10px; margin: 18px 0 0; color: var(--muted); font-size: 12px; }
+    .try-row select { min-height: 42px; border: 1px solid #b8c1b2; border-radius: 7px; padding: 8px 10px; background: var(--paper); color: var(--ink); }
+    .layout { display: grid; grid-template-columns: minmax(300px, 390px) minmax(240px, 1fr);
+      align-items: start; gap: 46px; margin-top: 28px; }
+    .phone { width: 100%; min-height: 760px; max-width: 390px; margin: auto; border: 1px solid #aeb8a7;
+      border-radius: 30px; background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+    .status { display: flex; justify-content: space-between; padding: 18px 24px 10px; font-size: 12px; font-weight: 650; }
+    .appbar { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 12px 22px; border-bottom: 1px solid var(--line); }
+    .brand { font-size: 16px; font-weight: 650; letter-spacing: -.04em; }
+    .local { color: var(--green); font-size: 10px; white-space: nowrap; }
+    .content { flex: 1; overflow-y: auto; padding: 22px 22px 16px; }
+    .content:focus { outline: none; }
+    .step { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; }
+    h2 { margin: 10px 0 7px; font-size: 29px; font-weight: 500; line-height: 1.14; letter-spacing: -.045em; }
+    h3 { margin: 0; font-size: 14px; font-weight: 650; }
+    p { font-size: 12px; line-height: 1.6; }
+    .sub { margin: 0 0 18px; color: var(--muted); }
+    .today { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      margin: 16px 0 12px; color: var(--muted); font-size: 11px; }
+    .tile-list { display: grid; gap: 10px; }
+    .tile { width: 100%; min-height: 66px; display: flex; align-items: center; gap: 12px; text-align: left;
+      padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: transparent; color: var(--ink); }
+    .tile:hover { background: #f2f5ef; border-color: #b9c5b2; }
+    .tile.primary-tile { min-height: 78px; border-color: #cbd5c5; background: #f4f7f1; }
+    .tile.unavailable { background: #f4f4ef; }
+    .mark { flex: 0 0 38px; width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 50%; background: var(--pale); color: var(--green); font-weight: 650; }
+    .copy { min-width: 0; flex: 1; }
+    .copy strong { display: block; font-size: 12px; font-weight: 650; }
+    .copy small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .arrow { color: var(--green); font-size: 17px; }
+    .badge { max-width: 128px; border: 1px solid #cbd5c5; border-radius: 99px; padding: 6px 8px;
+      color: var(--green); font-size: 10px; line-height: 1.25; text-align: center; }
+    .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 22px 0 10px; }
+    .section-heading h3 { font-size: 12px; }
+    .text-button { min-height: 40px; border: 0; padding: 8px; background: transparent; color: var(--green);
+      font-size: 11px; font-weight: 650; }
+    .text-button:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .primary { width: 100%; min-height: 49px; border: 0; border-radius: 8px; padding: 12px;
+      background: var(--ink); color: #fff; font-size: 13px; font-weight: 600; }
+    .primary:hover { background: #354d3b; }
+    .secondary { min-height: 44px; border: 1px solid #b8c1b2; border-radius: 8px;
+      padding: 10px 12px; background: transparent; color: var(--ink); font-size: 12px; font-weight: 600; }
+    .secondary:hover { background: #eef2ea; }
+    .subtle-action { display: block; min-height: 44px; margin: 2px auto 0; border: 0;
+      padding: 8px 12px; background: transparent; color: var(--green); font-size: 11px; font-weight: 600; }
+    .footer { padding: 8px 22px 5px; }
+    .footnote { margin: 9px 0; color: var(--muted); font-size: 10px; line-height: 1.5; text-align: center; }
+    .homebar { width: 104px; height: 4px; margin: 10px auto 4px; border-radius: 8px; background: #252b24; }
+    .feedback { min-height: 20px; margin: 9px 0 0; color: var(--muted); font-size: 11px; }
+    .feedback.error { color: var(--error); }
+    .feedback.success { color: var(--green); }
+    .empty { padding: 26px 12px; border: 1px dashed #bdc8b8; border-radius: 9px;
+      color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
+    .capture-display { display: grid; align-content: center; min-height: 105px; margin: 14px 0;
+      padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #f5f7f1; }
+    .capture-display small { color: var(--muted); font-size: 11px; }
+    .capture-display output { overflow: hidden; font-size: clamp(32px, 9vw, 43px); font-weight: 500;
+      letter-spacing: -.055em; white-space: nowrap; }
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .key { min-height: 49px; border: 1px solid var(--line); border-radius: 9px; background: transparent;
+      color: var(--ink); font-size: 18px; }
+    .key:hover { background: #eef2ea; }
+    .periods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 14px 0 12px; }
+    .period { min-height: 40px; border: 1px solid var(--line); border-radius: 7px; background: transparent;
+      color: var(--muted); font-size: 11px; }
+    .period[aria-pressed="true"] { border-color: var(--green); background: var(--pale); color: var(--ink); font-weight: 650; }
+    .total-line { display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+      padding: 12px 0 10px; border-bottom: 1px solid var(--line); }
+    .total-line span { color: var(--muted); font-size: 11px; }
+    .total-line strong { font-size: 16px; font-weight: 600; }
+    .expense-list { display: grid; gap: 8px; padding-top: 10px; }
+    .expense-row { display: flex; align-items: center; gap: 10px; padding: 11px;
+      border: 1px solid var(--line); border-radius: 9px; }
+    .expense-row .copy strong { font-size: 11px; }
+    .expense-row .copy small { font-size: 10px; }
+    .expense-value { white-space: nowrap; font-size: 12px; font-weight: 650; }
+    .info-card { margin: 14px 0; padding: 14px; border: 1px solid #cbd5c5; border-radius: 10px; background: #f4f7f1; }
+    .info-card p { margin: 6px 0 0; color: var(--muted); }
+    .custom-row { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .custom-row:last-child { border-bottom: 0; }
+    .custom-row small { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .pin-toggle { min-width: 82px; min-height: 40px; }
+    .prototype-notes { padding: 8px 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .prototype-notes h2 { font-size: 20px; letter-spacing: -.02em; }
+    .prototype-notes ul { padding-left: 20px; }
+    .prototype-notes a { color: var(--green); }
+    [hidden] { display: none !important; }
+    .board-footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid #cbd2c6;
+      color: var(--muted); font-size: 11px; line-height: 1.65; }
+    @media (max-width: 760px) {
+      .board { padding: 24px 16px; }
+      .masthead { display: block; }
+      .tag { display: inline-block; margin-top: 16px; }
+      .layout { grid-template-columns: minmax(0, 390px); justify-content: center; gap: 24px; }
+      .phone { min-height: min(780px, calc(100dvh - 170px)); }
+      .prototype-notes { max-width: 390px; }
+      .try-row { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 380px) {
+      .phone { border-radius: 20px; min-height: 740px; }
+      .content { padding-right: 16px; padding-left: 16px; }
+      .appbar { padding-right: 16px; padding-left: 16px; }
+      .badge { max-width: 105px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">NestVest · Phase 3</div>
+        <h1>A clear way around home.</h1>
+        <p class="intro">A quiet starting point for the things you use most. Your existing
+          amount-first expense flow stays one tap away; optional details stay optional.</p>
+      </div>
+      <div class="tag">Interactive mockup · synthetic data only</div>
+    </header>
+
+    <div class="try-row">
+      <label for="preview-state">Preview a state</label>
+      <select id="preview-state">
+        <option value="normal">Normal dashboard</option>
+        <option value="no-summary">Summary unavailable</option>
+        <option value="no-data">No expenses recorded</option>
+        <option value="zero-today">Nothing spent today</option>
+        <option value="save-failure">Preference save fails</option>
+        <option value="module-unavailable">Pinned option unavailable</option>
+      </select>
+      <button class="text-button" id="reset-mock" type="button">Reset mockup</button>
+    </div>
+
+    <div class="layout">
+      <section class="phone" aria-label="Interactive NestVest dashboard prototype">
+        <div class="status" aria-hidden="true"><span>9:41</span><span>▰ ▴ ▰</span></div>
+        <div class="appbar">
+          <div class="brand">⌂ NestVest</div>
+          <span class="local">● On this device</span>
+        </div>
+        <div class="content" id="screen-content" tabindex="-1">
+          <section class="screen" id="dashboard-screen" aria-labelledby="dashboard-title">
+            <div class="step">Your home</div>
+            <h2 id="dashboard-title" tabindex="-1">Good to see you.</h2>
+            <p class="sub">A little more room for what matters today.</p>
+            <div class="today"><span>Today · sample activity</span><span id="today-date"></span></div>
+            <div class="section-heading"><h3>Pinned for you</h3><button class="text-button" data-go="customize-screen">Customize</button></div>
+            <div class="tile-list" id="pinned-list"></div>
+            <div class="section-heading">
+              <h3>More</h3><button class="text-button" id="open-more">See all <span id="more-count"></span></button>
+            </div>
+            <div class="feedback" id="dashboard-feedback" role="status" aria-live="polite"></div>
+          </section>
+
+          <section class="screen" id="more-screen" aria-labelledby="more-title" hidden>
+            <div class="step">All available actions</div>
+            <h2 id="more-title" tabindex="-1">More</h2>
+            <p class="sub">Everything stays within reach, even when it is not pinned.</p>
+            <div class="tile-list" id="more-list"></div>
+            <p class="feedback" id="more-feedback" role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="screen" id="customize-screen" aria-labelledby="customize-title" hidden>
+            <div class="step">Make it yours</div>
+            <h2 id="customize-title" tabindex="-1">Pin your favorites.</h2>
+            <p class="sub">Pinned options appear on your dashboard. Unpinned options stay under More.</p>
+            <div id="customize-list"></div>
+            <p class="feedback" id="customize-feedback" role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="screen" id="capture-screen" aria-labelledby="capture-title" hidden>
+            <div class="step">A quick note to yourself</div>
+            <h2 id="capture-title" tabindex="-1">What did you spend?</h2>
+            <p class="sub">Amount first. Add context only if you want.</p>
+            <div class="capture-display">
+              <small>Sample profile currency · INR</small>
+              <output id="amount-output" aria-live="polite">₹0</output>
+            </div>
+            <div class="keypad" role="group" aria-label="Amount keypad">
+              <button class="key" data-key="1" type="button">1</button>
+              <button class="key" data-key="2" type="button">2</button>
+              <button class="key" data-key="3" type="button">3</button>
+              <button class="key" data-key="4" type="button">4</button>
+              <button class="key" data-key="5" type="button">5</button>
+              <button class="key" data-key="6" type="button">6</button>
+              <button class="key" data-key="7" type="button">7</button>
+              <button class="key" data-key="8" type="button">8</button>
+              <button class="key" data-key="9" type="button">9</button>
+              <button class="key" data-key="." type="button" aria-label="Decimal point">.</button>
+              <button class="key" data-key="0" type="button">0</button>
+              <button class="key" id="backspace" type="button" aria-label="Delete last digit">⌫</button>
+            </div>
+            <p class="feedback" id="capture-feedback" role="status" aria-live="polite"></p>
+            <p class="footnote">No category, vendor, or receipt required.</p>
+          </section>
+
+          <section class="screen" id="history-screen" aria-labelledby="history-title" hidden>
+            <div class="step">Your spending · sample entries</div>
+            <h2 id="history-title" tabindex="-1">Today</h2>
+            <div class="periods" role="group" aria-label="Expense history period">
+              <button class="period" type="button" data-period="day" aria-pressed="true">Today</button>
+              <button class="period" type="button" data-period="week" aria-pressed="false">This week</button>
+              <button class="period" type="button" data-period="month" aria-pressed="false">This month</button>
+            </div>
+            <div class="total-line"><span id="history-count">Today · 4 expenses</span><strong id="history-total">₹1,725.00</strong></div>
+            <div class="expense-list" id="expense-list" aria-live="polite"></div>
+            <p class="feedback" id="history-feedback" role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="screen" id="reminders-screen" aria-labelledby="reminders-title" hidden>
+            <div class="step">Your pace, your choice</div>
+            <h2 id="reminders-title" tabindex="-1">Reminders</h2>
+            <div class="info-card">
+              <strong>Daily expense reminder</strong>
+              <p>Quiet, local reminders are optional. Expense capture works either way.</p>
+            </div>
+            <button class="secondary" id="reminder-toggle" type="button" role="switch" aria-checked="false">Turn reminders on</button>
+            <p class="feedback" id="reminder-feedback" role="status" aria-live="polite">Reminders are off.</p>
+          </section>
+        </div>
+        <div class="footer">
+          <button class="primary" id="main-action" type="button" hidden>Open</button>
+          <button class="subtle-action" id="back-dashboard" type="button" hidden>‹ Back to dashboard</button>
+          <p class="footnote" id="footer-note">Shortcuts are yours to choose.</p>
+          <div class="homebar" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <aside class="prototype-notes">
+        <div class="eyebrow">Flow notes</div>
+        <h2>Familiar, with a new front door.</h2>
+        <ul>
+          <li>After profile setup and on return, the dashboard is the starting point.</li>
+          <li><strong>Add expense</strong> opens the existing amount-first capture; nothing else is required.</li>
+          <li><strong>Expenses</strong> and <strong>Reminders</strong> remain available whether pinned or under More.</li>
+          <li>Customize changes are temporary prototype state only; no real data is read or saved.</li>
+          <li>Planning, wealth, and family features are not shown as available destinations.</li>
+        </ul>
+        <p>Phase 2 visual and behavior reference:
+          <a href="../002-daily-expense-capture/ui-mockups.html">Expense capture, history, and reminders mockup</a>.
+          The production repository currently opens the capture screen directly; this dashboard
+          launch is a Phase 3 proposal.</p>
+      </aside>
+    </div>
+
+    <footer class="board-footer">
+      UI study only. All sample entries and dashboard state are synthetic and held in memory
+      for this page session; refreshing resets the mockup. This page does not change app data,
+      persist preferences, or simulate real notification delivery.
+    </footer>
+  </main>
+  <script>
+    const actions = [
+      { id: "capture", title: "Add expense", detail: "Record an amount now. Details can wait.", mark: "+", screen: "capture-screen" },
+      { id: "expenses", title: "Expenses", detail: "A clear view of what you have recorded.", mark: "E", screen: "history-screen" },
+      { id: "reminders", title: "Reminders", detail: "A gentle nudge, only if you choose.", mark: "R", screen: "reminders-screen" }
+    ];
+    const initialPinned = ["capture", "expenses"];
+    const sampleExpenses = [
+      { vendor: "Corner tea shop", amount: 240, when: "9:41 AM", category: "Culture", sample: true },
+      { vendor: "Expense", amount: 1280, when: "8:16 AM", category: "No category yet", sample: true },
+      { vendor: "Metro", amount: 85, when: "7:52 AM", category: "Needs", sample: true },
+      { vendor: "Corner store", amount: 120, when: "7:45 AM", category: "Needs", sample: true }
+    ];
+    let pinned = [...initialPinned];
+    let draftPinned = [...pinned];
+    let expenses = [...sampleExpenses];
+    let activeScreen = "dashboard-screen";
+    let amount = "";
+    let period = "day";
+    let previewState = "normal";
+    let remindersEnabled = false;
+
+    const byId = id => document.getElementById(id);
+    const money = value => new Intl.NumberFormat(undefined, {
+      style: "currency", currency: "INR", minimumFractionDigits: 2
+    }).format(value);
+    const feedback = (id, message, kind = "") => {
+      const node = byId(id);
+      node.textContent = message;
+      node.className = `feedback ${kind}`.trim();
+    };
+    // Preview states change the synthetic data source, not just labels:
+    // "no-data" has no recorded history; "zero-today" has earlier history but nothing today.
+    const userAdded = () => expenses.filter(item => !item.sample);
+    const todayItems = () => previewState === "no-data" || previewState === "zero-today"
+      ? userAdded() : expenses;
+    const earlierItems = () => previewState === "zero-today"
+      ? sampleExpenses.map(item => ({ ...item, when: `Mon · ${item.when}` })) : [];
+    const hasNoData = () => previewState === "no-data" && userAdded().length === 0;
+    function showScreen(id) {
+      activeScreen = id;
+      document.querySelectorAll(".screen").forEach(screen => { screen.hidden = screen.id !== id; });
+      const inDashboard = id === "dashboard-screen";
+      byId("back-dashboard").hidden = inDashboard;
+      byId("main-action").hidden = inDashboard ||
+        id === "more-screen" || id === "reminders-screen";
+      byId("main-action").textContent = id === "capture-screen" ? "Save expense" :
+        id === "history-screen" ? "＋ Add an expense" :
+        id === "customize-screen" ? "Save choices" : "Open";
+      byId("footer-note").textContent = id === "capture-screen" ? "Saving needs only an amount." :
+        id === "history-screen" ? "Sample data · choose a period to review." :
+        inDashboard ? "Shortcuts are yours to choose." :
+        "Mockup only · no real settings change.";
+      const heading = document.querySelector(`#${id} h2`);
+      if (heading) heading.focus({ preventScroll: true });
+      renderActions();
+    }
+    function tile(action, isPrimary = false) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `tile${isPrimary && action.id === "capture" ? " primary-tile" : ""}`;
+      button.setAttribute("aria-label", action.title);
+      if (action.unavailable) {
+        button.classList.add("unavailable");
+        button.disabled = true;
+        button.setAttribute("aria-label", `${action.title}, unavailable`);
+      }
+      const mark = document.createElement("span");
+      mark.className = "mark";
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = action.mark;
+      const copy = document.createElement("span");
+      copy.className = "copy";
+      const strong = document.createElement("strong");
+      strong.textContent = action.title;
+      const small = document.createElement("small");
+      small.textContent = action.unavailable ? "Temporarily unavailable" : action.detail;
+      copy.append(strong, small);
+      button.append(mark, copy);
+      if (action.id === "expenses" && !action.unavailable && previewState !== "no-summary") {
+        if (hasNoData()) {
+          small.textContent = "No expenses recorded yet";
+        } else {
+          const today = todayItems();
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = `${today.length} today · ${money(today.reduce((sum, item) => sum + item.amount, 0))}`;
+          badge.setAttribute("aria-label", `Today's sample summary: ${badge.textContent}`);
+          button.append(badge);
+        }
+      } else if (action.id === "expenses" && previewState === "no-summary") {
+        small.textContent = "Summary unavailable · open to review";
+      }
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "›";
+      button.append(arrow);
+      if (!action.unavailable) button.addEventListener("click", () => showScreen(action.screen));
+      return button;
+    }
+    function renderActions() {
+      const primary = byId("pinned-list");
+      const more = byId("more-list");
+      if (!primary || !more) return;
+      primary.replaceChildren();
+      more.replaceChildren();
+      const primaryActions = actions.filter(action => pinned.includes(action.id));
+      const otherActions = actions.filter(action => !pinned.includes(action.id));
+      primaryActions.forEach(action => {
+        const unavailable = previewState === "module-unavailable" && action.id === "expenses";
+        primary.append(tile({ ...action, unavailable }, true));
+      });
+      byId("more-count").textContent = otherActions.length ? `(${otherActions.length})` : "";
+      if (otherActions.length) otherActions.forEach(action => more.append(tile(action)));
+      else more.append(Object.assign(document.createElement("div"), {
+        className: "empty", textContent: "There are no additional actions right now. All available options are on your dashboard."
+      }));
+      renderCustomize();
+    }
+    function renderCustomize() {
+      const list = byId("customize-list");
+      if (!list) return;
+      list.replaceChildren();
+      actions.forEach(action => {
+        const row = document.createElement("div");
+        row.className = "custom-row";
+        const copy = document.createElement("div");
+        copy.append(document.createTextNode(action.title));
+        const detail = document.createElement("small");
+        detail.textContent = draftPinned.includes(action.id) ? "Pinned on dashboard" : "Available under More";
+        copy.append(detail);
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "secondary pin-toggle";
+        toggle.textContent = draftPinned.includes(action.id) ? "Unpin" : "Pin";
+        toggle.setAttribute("aria-pressed", String(draftPinned.includes(action.id)));
+        toggle.setAttribute("aria-label", `${draftPinned.includes(action.id) ? "Unpin" : "Pin"} ${action.title}`);
+        toggle.addEventListener("click", () => {
+          draftPinned = draftPinned.includes(action.id)
+            ? draftPinned.filter(id => id !== action.id) : [...draftPinned, action.id];
+          renderCustomize();
+        });
+        row.append(copy, toggle);
+        list.append(row);
+      });
+    }
+    function renderHistory() {
+      const list = byId("expense-list");
+      if (!list) return;
+      list.replaceChildren();
+      const today = todayItems();
+      const items = period === "day" ? today : period === "week"
+        ? [...today, ...earlierItems()].slice(0, 4) : [...today, ...earlierItems()];
+      const label = period === "day" ? "Today" : period === "week" ? "This week" : "This month";
+      byId("history-title").textContent = label;
+      if (hasNoData()) {
+        byId("history-count").textContent = `${label} · no expenses recorded yet`;
+        byId("history-total").textContent = "No data";
+        list.append(Object.assign(document.createElement("div"), {
+          className: "empty", textContent: "You have not recorded an expense yet. Your first one can start here."
+        }));
+        return;
+      }
+      byId("history-count").textContent = `${label} · ${items.length} ${items.length === 1 ? "expense" : "expenses"}`;
+      byId("history-total").textContent = money(items.reduce((sum, item) => sum + item.amount, 0));
+      if (!items.length) {
+        list.append(Object.assign(document.createElement("div"), {
+          className: "empty", textContent: "Nothing spent in this period. Your next expense can start here."
+        }));
+        return;
+      }
+      items.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "expense-row";
+        const mark = document.createElement("span");
+        mark.className = "mark";
+        mark.setAttribute("aria-hidden", "true");
+        mark.textContent = item.category === "No category yet" ? "·" : item.category.slice(0, 1);
+        const copy = document.createElement("span");
+        copy.className = "copy";
+        const title = document.createElement("strong");
+        title.textContent = item.vendor;
+        const small = document.createElement("small");
+        small.textContent = `${item.when} · ${item.category}`;
+        copy.append(title, small);
+        const value = document.createElement("span");
+        value.className = "expense-value";
+        value.textContent = money(item.amount);
+        row.append(mark, copy, value);
+        list.append(row);
+      });
+    }
+    function saveChoices() {
+      if (previewState === "save-failure") {
+        feedback("customize-feedback", "Could not save these choices. Your previous dashboard is unchanged.", "error");
+        return;
+      }
+      pinned = [...draftPinned];
+      feedback("dashboard-feedback", "Dashboard choices saved on this device in this mockup.", "success");
+      showScreen("dashboard-screen");
+    }
+    function handlePrimaryAction() {
+      if (activeScreen === "capture-screen") {
+        const value = Number(amount);
+        if (!amount || !Number.isFinite(value) || value <= 0) {
+          feedback("capture-feedback", "Enter an amount greater than zero to save.", "error");
+          return;
+        }
+        expenses.unshift({ vendor: "Expense", amount: value, when: "Just now", category: "No category yet", sample: false });
+        amount = "";
+        renderAmount();
+        feedback("capture-feedback", "Saved on this device in this mockup. Details remain optional.", "success");
+        renderHistory();
+        renderActions();
+      } else if (activeScreen === "history-screen") {
+        showScreen("capture-screen");
+      } else if (activeScreen === "customize-screen") {
+        saveChoices();
+      } else if (activeScreen === "reminders-screen") {
+        feedback("reminder-feedback", "Reminder controls are illustrative only.", "");
+      }
+    }
+    function renderAmount() {
+      byId("amount-output").textContent = money(Number(amount || 0));
+    }
+    document.querySelector(".keypad").addEventListener("click", event => {
+      const button = event.target.closest("[data-key]");
+      if (!button) return;
+      const key = button.dataset.key;
+      if (key === "." && amount.includes(".")) return;
+      if (amount.length >= 12) return;
+      amount += key;
+      renderAmount();
+      feedback("capture-feedback", "");
+    });
+    byId("backspace").addEventListener("click", () => {
+      amount = amount.slice(0, -1);
+      renderAmount();
+      feedback("capture-feedback", "");
+    });
+    document.querySelectorAll("[data-go]").forEach(button =>
+      button.addEventListener("click", () => {
+        draftPinned = [...pinned];
+        feedback("customize-feedback", "");
+        showScreen(button.dataset.go);
+      }));
+    byId("open-more").addEventListener("click", () => showScreen("more-screen"));
+    byId("main-action").addEventListener("click", handlePrimaryAction);
+    byId("back-dashboard").addEventListener("click", () => showScreen("dashboard-screen"));
+    document.querySelectorAll(".period").forEach(button => button.addEventListener("click", () => {
+      period = button.dataset.period;
+      document.querySelectorAll(".period").forEach(item =>
+        item.setAttribute("aria-pressed", String(item === button)));
+      renderHistory();
+    }));
+    byId("reminder-toggle").addEventListener("click", event => {
+      remindersEnabled = !remindersEnabled;
+      event.currentTarget.setAttribute("aria-checked", String(remindersEnabled));
+      event.currentTarget.textContent = remindersEnabled ? "Turn reminders off" : "Turn reminders on";
+      feedback("reminder-feedback", remindersEnabled
+        ? "Illustrative only: real notification delivery is not simulated."
+        : "Reminders are off.");
+    });
+    byId("preview-state").addEventListener("change", event => {
+      previewState = event.target.value;
+      feedback("customize-feedback", "");
+      renderHistory();
+      renderActions();
+    });
+    byId("reset-mock").addEventListener("click", () => {
+      pinned = [...initialPinned];
+      draftPinned = [...pinned];
+      expenses = [...sampleExpenses];
+      period = "day";
+      amount = "";
+      previewState = "normal";
+      remindersEnabled = false;
+      byId("preview-state").value = "normal";
+      byId("reminder-toggle").setAttribute("aria-checked", "false");
+      byId("reminder-toggle").textContent = "Turn reminders on";
+      feedback("dashboard-feedback", "Mockup reset. No app data was changed.", "success");
+      feedback("capture-feedback", "");
+      feedback("customize-feedback", "");
+      renderAmount();
+      renderHistory();
+      showScreen("dashboard-screen");
+    });
+    byId("today-date").textContent = new Intl.DateTimeFormat(undefined, {
+      month: "short", day: "numeric"
+    }).format(new Date());
+    renderAmount();
+    renderHistory();
+    renderActions();
+  </script>
+</body>
+</html>

@@ -17,13 +17,14 @@ class ExpenseViewModel(
     private val repository: ExpenseRepository,
     val profile: PrimaryProfile,
     private val savedState: SavedStateHandle,
+    initialScreen: ExpenseScreen = ExpenseScreen.CAPTURE,
     private val clock: () -> Clock = { Clock.systemDefaultZone() },
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(ExpenseUiState(
         amount = savedState["expenseAmount"] ?: "",
         period = savedState.get<String>("expensePeriod")?.let(ExpensePeriod::valueOf) ?: ExpensePeriod.DAY,
         selectedId = savedState.get<String>("selectedExpenseId")?.let(UUID::fromString),
-        screen = savedState.get<String>("expenseScreen")?.let(ExpenseScreen::valueOf) ?: ExpenseScreen.CAPTURE,
+        screen = savedState.get<String>("expenseScreen")?.let(ExpenseScreen::valueOf) ?: initialScreen,
     ))
     val state = mutableState.asStateFlow()
     private var observation: Job? = null

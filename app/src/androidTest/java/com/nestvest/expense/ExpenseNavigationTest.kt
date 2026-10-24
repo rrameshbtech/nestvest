@@ -34,14 +34,19 @@ class ExpenseNavigationTest {
         }
         lateinit var capture: ExpenseViewModel
         lateinit var reminders: ReminderViewModel
+        var returnedHome = false
         compose.runOnUiThread {
             capture = ExpenseViewModel(expenses, profile, SavedStateHandle())
             reminders = ReminderViewModel(RoomReminderRepository(database), scheduler, { false }, { true })
         }
         try {
             compose.setContent {
-                NestVestTheme { ExpenseRoute(capture, expenses, reminders) }
+                NestVestTheme {
+                    ExpenseRoute(capture, expenses, reminders, onDashboardBack = { returnedHome = true })
+                }
             }
+            compose.onNodeWithContentDescription("NestVest, return to dashboard").performClick()
+            compose.runOnIdle { assertTrue(returnedHome) }
             compose.onNodeWithText("Expenses").performClick()
             compose.onNodeWithContentDescription("Daily reminder").performClick()
             compose.onNodeWithText("Daily expense reminders").assertExists()

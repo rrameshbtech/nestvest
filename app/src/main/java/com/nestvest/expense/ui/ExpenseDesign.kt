@@ -3,6 +3,7 @@ package com.nestvest.expense.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -16,10 +17,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nestvest.R
+import com.nestvest.dashboard.ui.LocalDashboardHomeAction
 
 internal object ExpenseStyle {
     val Ink = Color(0xFF202521)
@@ -52,12 +57,30 @@ internal fun ExpenseScaffold(
     )) {
         Surface(color = ExpenseStyle.Paper, contentColor = ExpenseStyle.Ink) {
             Column(Modifier.fillMaxSize().imePadding().testTag("expense-screen")) {
+                val homeActionDescription = stringResource(R.string.dashboard_home_action)
                 Row(Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 8.dp)
                     .heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ExpenseGlyph(ExpenseSymbol.HOME, modifier = Modifier.size(18.dp))
-                    Text(stringResource(R.string.app_name), fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                    val onHome = LocalDashboardHomeAction.current
+                    Row(
+                        Modifier
+                            .heightIn(min = 48.dp)
+                            .then(
+                                if (onHome != null) Modifier
+                                    .clickable(role = Role.Button, onClick = onHome)
+                                    .semantics {
+                                        contentDescription = homeActionDescription
+                                    }
+                                else Modifier,
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        ExpenseGlyph(ExpenseSymbol.HOME, modifier = Modifier.size(18.dp))
+                        Text(stringResource(R.string.app_name), fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold)
+                    }
+                    Spacer(Modifier.weight(1f))
                     if (actions != null) actions() else ExpenseLocalCue()
                 }
                 HorizontalDivider(color = ExpenseStyle.Line)
@@ -116,7 +139,9 @@ internal fun ExpenseSecondaryButton(text: String, onClick: () -> Unit,
     }
 }
 
-internal enum class ExpenseSymbol { HOME, NEEDS, WANTS, CULTURE, UNEXPECTED, RECEIPT, PLUS, ARROW, DELETE, LOCK }
+internal enum class ExpenseSymbol {
+    HOME, NEEDS, WANTS, CULTURE, UNEXPECTED, RECEIPT, PLUS, ARROW, DELETE, LOCK, REMINDER,
+}
 
 @Composable
 internal fun ExpenseGlyph(symbol: ExpenseSymbol, modifier: Modifier = Modifier,
@@ -171,6 +196,12 @@ internal fun ExpenseGlyph(symbol: ExpenseSymbol, modifier: Modifier = Modifier,
                     path.lineTo(5f, 21f); path.close()
                     path.moveTo(8f, 10f); path.lineTo(8f, 6f)
                     path.cubicTo(8f, 1f, 16f, 1f, 16f, 6f); path.lineTo(16f, 10f)
+                }
+                ExpenseSymbol.REMINDER -> {
+                    path.moveTo(18f, 9f); path.cubicTo(18f, 5f, 15f, 3f, 12f, 3f)
+                    path.cubicTo(9f, 3f, 6f, 5f, 6f, 9f); path.lineTo(6f, 14f)
+                    path.lineTo(4f, 18f); path.lineTo(20f, 18f); path.lineTo(18f, 14f); path.close()
+                    path.moveTo(10f, 21f); path.quadraticTo(12f, 23f, 14f, 21f)
                 }
             }
             drawPath(path, color, style = Stroke(width = 1.7f))

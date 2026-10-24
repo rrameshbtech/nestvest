@@ -14,6 +14,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import com.nestvest.dashboard.domain.DashboardDestination
+import com.nestvest.dashboard.ui.DashboardRoute
+import com.nestvest.dashboard.ui.DashboardViewModel
 import com.nestvest.profile.ui.ProfileRoute
 import com.nestvest.profile.ui.ProfileViewModel
 import com.nestvest.profile.ui.theme.NestVestTheme
@@ -50,23 +55,42 @@ class MainActivity : ComponentActivity() {
                 initializer { ProfileViewModel(repository, createSavedStateHandle()) }
             })
             NestVestTheme {
+                var destination by remember { mutableStateOf<DashboardDestination?>(null) }
+                LaunchedEffect(captureRequest) {
+                    if (captureRequest > 0) destination = DashboardDestination.EXPENSE_CAPTURE
+                }
                 ProfileRoute(vm) { profile ->
-                    val expenses: ExpenseViewModel = viewModel(factory = viewModelFactory {
+                    val dashboard: DashboardViewModel = viewModel(key = "dashboard", factory = viewModelFactory {
                         initializer {
-                            ExpenseViewModel(app.expenseRepository,
-                                profile, createSavedStateHandle())
+                            DashboardViewModel(app.dashboardPreferenceRepository, app.expenseRepository, profile)
                         }
                     })
-                    val reminders: ReminderViewModel = viewModel(factory = viewModelFactory {
-                        initializer {
-                            ReminderViewModel(app.reminderRepository, app.reminderScheduler,
-                                app.reminderNotifier::available) { Build.VERSION.SDK_INT >= 33 }
+                    if (destination == null) {
+                        DashboardRoute(dashboard) { destination = it }
+                    } else {
+                        val selectedDestination = checkNotNull(destination)
+                        val screen = when (selectedDestination) {
+                            DashboardDestination.EXPENSE_CAPTURE -> ExpenseScreen.CAPTURE
+                            DashboardDestination.EXPENSE_HISTORY -> ExpenseScreen.HISTORY
+                            DashboardDestination.REMINDERS -> ExpenseScreen.REMINDERS
                         }
-                    })
-                    LaunchedEffect(captureRequest) {
-                        if (captureRequest > 0) expenses.navigate(ExpenseScreen.CAPTURE)
+                        val expenses: ExpenseViewModel = viewModel(key = "expense-route", factory = viewModelFactory {
+                            initializer {
+                                ExpenseViewModel(app.expenseRepository, profile, createSavedStateHandle(),
+                                    initialScreen = screen)
+                            }
+                        })
+                        LaunchedEffect(destination) { expenses.navigate(screen) }
+                        val reminders: ReminderViewModel = viewModel(key = "reminders", factory = viewModelFactory {
+                            initializer {
+                                ReminderViewModel(app.reminderRepository, app.reminderScheduler,
+                                    app.reminderNotifier::available) { Build.VERSION.SDK_INT >= 33 }
+                            }
+                        })
+                        ExpenseRoute(expenses, app.expenseRepository, reminders, screen) {
+                            destination = null
+                        }
                     }
-                    ExpenseRoute(expenses, app.expenseRepository, reminders)
                 }
             }
         }

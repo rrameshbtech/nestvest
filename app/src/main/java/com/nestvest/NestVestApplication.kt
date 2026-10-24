@@ -1,6 +1,7 @@
 package com.nestvest
 
 import android.app.Application
+import com.nestvest.dashboard.data.RoomDashboardPreferenceRepository
 import com.nestvest.profile.data.ProfileDatabase
 import com.nestvest.profile.data.RoomProfileRepository
 import com.nestvest.profile.domain.ProfileRepository
@@ -15,6 +16,7 @@ class NestVestApplication : Application() {
     val repository: ProfileRepository by lazy { RoomProfileRepository(database) }
     val expenseRepository by lazy { RoomExpenseRepository(database, receipts = ReceiptFileStore(this)) }
     val reminderRepository by lazy { RoomReminderRepository(database) }
+    val dashboardPreferenceRepository by lazy { RoomDashboardPreferenceRepository(database.dashboardPreferenceDao()) }
     val reminderNotifier by lazy { ExpenseReminderNotifier(this) }
     val reminderScheduler by lazy { ReminderScheduler(this, reminderRepository, reminderNotifier::available) }
 }
