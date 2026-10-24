@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>NestVest · Phase 3 Kakeibo planning mockup</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202521;
+      --muted: #626a62;
+      --paper: #fafbf7;
+      --line: #dce1d8;
+      --green: #3d5844;
+      --pale: #e7eee2;
+      --note: #f4f7f1;
+      --note-border: #cbd5c5;
+      --control: #b8c1b2;
+      --error: #793e2d;
+      --error-bg: #f7eeea;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9ece5; color: var(--ink); }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid #53754e; outline-offset: 3px;
+    }
+    button:disabled { cursor: not-allowed; opacity: .62; }
+    .board { max-width: 1500px; margin: auto; padding: 40px 28px; }
+    .masthead { display: flex; justify-content: space-between; align-items: end; gap: 24px;
+      padding-bottom: 24px; border-bottom: 1px solid #cbd2c6; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 10px 0; font-size: clamp(28px, 4vw, 40px); font-weight: 500; letter-spacing: -.04em; }
+    .intro { max-width: 650px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .tag { border: 1px solid #bdc8b8; border-radius: 4px; padding: 9px 12px; white-space: nowrap; font-size: 12px; }
+    .try-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin: 18px 0 0; color: var(--muted); font-size: 12px; }
+    .try-row select { min-height: 42px; border: 1px solid var(--control); border-radius: 7px;
+      padding: 8px 10px; background: var(--paper); color: var(--ink); }
+    .layout { display: grid; grid-template-columns: minmax(300px, 390px) minmax(280px, 1fr);
+      align-items: start; gap: 46px; margin-top: 28px; }
+    .phone { width: 100%; min-height: 760px; max-width: 390px; margin: auto; border: 1px solid #aeb8a7;
+      border-radius: 30px; background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+    .status { display: flex; justify-content: space-between; padding: 18px 24px 10px; font-size: 12px; font-weight: 650; }
+    .appbar { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 10px 22px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 650; letter-spacing: -.04em; }
+    .brand-home { min-height: 44px; border: 0; padding: 4px 6px 4px 0; background: transparent;
+      color: var(--ink); font-weight: inherit; font-size: inherit; letter-spacing: inherit; }
+    .local { color: var(--green); font-size: 10px; white-space: nowrap; }
+    .content { flex: 1; overflow-y: auto; padding: 22px 22px 16px; }
+    .content:focus { outline: none; }
+    .screen[hidden] { display: none; }
+    .step { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; }
+    h2 { margin: 10px 0 7px; font-size: 29px; font-weight: 500; line-height: 1.14; letter-spacing: -.045em; }
+    h3 { margin: 0; font-size: 14px; font-weight: 650; }
+    p { font-size: 12px; line-height: 1.6; }
+    .sub { margin: 0 0 18px; color: var(--muted); }
+    .card { margin: 12px 0; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: transparent; }
+    .card.soft { border-color: var(--note-border); background: var(--note); }
+    .category-list { display: grid; gap: 8px; margin: 14px 0; }
+    .category-card { padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: transparent; }
+    .category-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .category-head strong { font-size: 12px; }
+    .category-head span { color: var(--muted); font-size: 10px; }
+    .category-card p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .primary { width: 100%; min-height: 49px; border: 0; border-radius: 8px; padding: 12px;
+      background: var(--ink); color: #fff; font-size: 13px; font-weight: 600; }
+    .primary:hover { background: #354d3b; }
+    .secondary { min-height: 44px; border: 1px solid var(--control); border-radius: 8px;
+      padding: 10px 12px; background: transparent; color: var(--ink); font-size: 12px; font-weight: 600; }
+    .secondary:hover { background: #eef2ea; }
+    .text-button { min-height: 44px; border: 0; padding: 8px; background: transparent; color: var(--green);
+      font-size: 11px; font-weight: 650; }
+    .text-button:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .footer { padding: 8px 22px 5px; }
+    .footnote { margin: 9px 0; color: var(--muted); font-size: 10px; line-height: 1.5; text-align: center; }
+    .homebar { width: 104px; height: 4px; margin: 10px auto 4px; border-radius: 8px; background: #252b24; }
+    .feedback { min-height: 20px; margin: 9px 0 0; color: var(--muted); font-size: 11px; }
+    .feedback.error { color: var(--error); }
+    .feedback.success { color: var(--green); }
+    .entry-tile { width: 100%; min-height: 72px; display: flex; align-items: center; gap: 12px;
+      text-align: left; padding: 12px; border: 1px solid var(--note-border); border-radius: 10px;
+      background: var(--note); color: var(--ink); }
+    .entry-mark { flex: 0 0 38px; width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 50%; background: var(--pale); color: var(--green); font-weight: 650; }
+    .entry-copy { min-width: 0; flex: 1; }
+    .entry-copy strong { display: block; font-size: 12px; }
+    .entry-copy small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .entry-arrow { color: var(--green); font-size: 17px; }
+    .field { display: block; margin: 12px 0; }
+    .label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 650; }
+    .field input, .field textarea { width: 100%; min-height: 46px; border: 1px solid var(--control);
+      border-radius: 8px; padding: 10px; background: var(--paper); color: var(--ink); font-size: 14px; }
+    .check-row { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+    .check-row input { width: 24px; height: 24px; margin: 0; accent-color: var(--green); }
+    .field input[type="number"] { text-align: right; }
+    .field textarea { min-height: 76px; resize: vertical; line-height: 1.5; }
+    .hint { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .money-input { position: relative; }
+    .money-input span { position: absolute; left: 11px; top: 12px; color: var(--muted); font-size: 13px; pointer-events: none; }
+    .money-input input { padding-left: 28px; }
+    .amount-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .category-plan { display: grid; grid-template-columns: minmax(0,1fr) minmax(104px, .8fr); gap: 10px;
+      align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+    .category-plan:last-child { border-bottom: 0; }
+    .category-plan label { font-size: 11px; font-weight: 600; }
+    .category-plan input { width: 100%; min-height: 44px; border: 1px solid var(--control);
+      border-radius: 7px; padding: 8px; background: var(--paper); color: var(--ink); text-align: right; }
+    .summary-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0;
+      border-bottom: 1px solid var(--line); font-size: 11px; }
+    .summary-row:last-child { border-bottom: 0; }
+    .summary-row span { color: var(--muted); }
+    .summary-row strong { font-weight: 650; text-align: right; }
+    .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      margin: 17px 0 8px; }
+    .section-heading h3 { font-size: 12px; }
+    .category-progress { margin: 10px 0; padding: 12px; border: 1px solid var(--line); border-radius: 9px; }
+    .category-progress button { width: 100%; min-height: 44px; text-align: left; }
+    .category-progress .text-button { display: flex; justify-content: flex-start; padding-left: 0; }
+    .category-slider { display: grid; gap: 6px; margin-top: 7px; }
+    .category-slider input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--green); }
+    .category-value { color: var(--muted); font-size: 10px; }
+    .learning-prompt { margin: 12px 0; padding: 12px; border: 1px solid var(--note-border);
+      border-radius: 9px; background: var(--note); }
+    .learning-prompt p { margin: 5px 0; color: var(--muted); }
+    .learning-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+    .daily-chart { display: block; width: 100%; height: 132px; overflow: visible; }
+    .daily-chart rect { fill: var(--green); }
+    .daily-chart .axis { stroke: var(--line); stroke-width: 1; }
+    .chart-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 10px; }
+    .health { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 650; }
+    .health-mark { display: inline-grid; width: 24px; height: 24px; place-items: center;
+      border: 1px solid var(--line); border-radius: 50%; background: var(--note); color: var(--green); }
+    .health.over .health-mark { border-color: #c8a99d; background: var(--error-bg); color: var(--error); }
+    .expense-choice { display: flex; align-items: center; gap: 10px; min-height: 56px;
+      padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 11px; }
+    .expense-choice input { width: 22px; height: 22px; accent-color: var(--green); }
+    .progress-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .progress-top strong { font-size: 12px; }
+    .progress-top span { color: var(--muted); font-size: 10px; text-align: right; }
+    .progress-track { height: 5px; margin: 9px 0 7px; border-radius: 9px; background: var(--pale); overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); }
+    .progress-fill.over { background: var(--error); }
+    .progress-detail { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 10px; }
+    .overspend { margin-top: 8px; color: var(--error); font-size: 11px; font-weight: 650; }
+    .callout { padding: 12px; border: 1px solid var(--line); border-radius: 9px; font-size: 11px; line-height: 1.5; }
+    .callout.error { border-color: #d3ada1; background: var(--error-bg); color: var(--error); }
+    .callout.neutral { background: var(--note); color: var(--muted); }
+    .week-head, .week-row { display: grid; grid-template-columns: minmax(95px,1fr) repeat(5, minmax(42px,.75fr));
+      gap: 4px; align-items: center; }
+    .week-head { margin: 8px 0; color: var(--muted); font-size: 9px; text-align: center; }
+    .week-head span:first-child { text-align: left; }
+    .week-row { padding: 6px 0; border-top: 1px solid var(--line); }
+    .week-row > strong { font-size: 10px; }
+    .week-row input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--control);
+      border-radius: 6px; padding: 5px 3px; text-align: right; background: var(--paper); color: var(--ink); font-size: 10px; }
+    .week-grid { display: grid; grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 8px; margin-top: 9px; }
+    .week-entry { display: grid; gap: 5px; min-width: 0; color: var(--muted); font-size: 10px; text-align: center; }
+    .week-entry input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--control);
+      border-radius: 6px; padding: 5px 3px; text-align: right; background: var(--paper); color: var(--ink); font-size: 10px; }
+    .week-total { display: flex; justify-content: space-between; gap: 8px; padding-top: 5px;
+      color: var(--muted); font-size: 10px; }
+    .reflection-answer { margin: 12px 0; }
+    .reflection-answer .label { line-height: 1.5; }
+    .footer-actions { display: grid; gap: 4px; }
+    .prototype-notes { padding: 8px 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .prototype-notes h2 { font-size: 20px; letter-spacing: -.02em; }
+    .prototype-notes ul { padding-left: 20px; }
+    .prototype-notes a { color: var(--green); }
+    [hidden] { display: none !important; }
+    .board-footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid #cbd2c6;
+      color: var(--muted); font-size: 11px; line-height: 1.65; }
+    @media (max-width: 760px) {
+      .board { padding: 24px 16px; }
+      .masthead { display: block; }
+      .tag { display: inline-block; margin-top: 16px; }
+      .layout { grid-template-columns: minmax(0, 390px); justify-content: center; gap: 24px; }
+      .phone { min-height: min(780px, calc(100dvh - 170px)); }
+      .prototype-notes { max-width: 390px; }
+      .try-row { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 359px) {
+      .phone { border-radius: 20px; min-height: 740px; }
+      .content { padding-right: 16px; padding-left: 16px; }
+      .appbar { padding-right: 16px; padding-left: 16px; }
+      .week-grid { grid-template-columns: repeat(2, minmax(44px, 1fr)); }
+      .amount-row { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">NestVest · Phase 3 · Kakeibo</div>
+        <h1>Plan with intention. Reflect with kindness.</h1>
+        <p class="intro">An interactive visual study for monthly planning, optional weekly pacing,
+          category progress, and a thoughtful end-of-period review. Existing expense capture
+          remains amount-first.</p>
+      </div>
+      <div class="tag">Mockup only · sample data</div>
+    </header>
+
+    <div class="try-row">
+      <label for="preview-state">Preview a state</label>
+      <select id="preview-state">
+        <option value="normal">Normal plan and progress</option>
+        <option value="no-plan">No plan yet</option>
+        <option value="validation">Plan exceeds available amount</option>
+        <option value="overspend">Category overspending</option>
+        <option value="unassigned">Unassigned expenses and other currency</option>
+        <option value="assignment-failure">Category assignment fails</option>
+        <option value="plan-failure">Plan save fails</option>
+        <option value="reflection-failure">Reflection save fails</option>
+        <option value="empty">No category expenses</option>
+        <option value="summary-unavailable">Dashboard summary unavailable</option>
+      </select>
+      <button class="text-button" id="reset-mock" type="button">Reset mockup</button>
+    </div>
+
+    <div class="layout">
+      <section class="phone" aria-label="Interactive NestVest Kakeibo prototype">
+        <div class="status" aria-hidden="true"><span>9:41</span><span>▰ ▴ ▰</span></div>
+        <div class="appbar">
+          <div class="brand">
+            <button class="brand-home" id="dashboard-home" type="button" aria-label="Return to dashboard">⌂ NestVest</button>
+          </div>
+          <span class="local">● On this device</span>
+        </div>
+        <div class="content" id="screen-content" tabindex="-1">
+          <section class="screen" id="dashboard-screen" aria-labelledby="dashboard-title">
+            <div class="step">Dashboard · current app starting point</div>
+            <h2 id="dashboard-title" tabindex="-1">Good to see you.</h2>
+            <p class="sub">Plan for this month and check progress when you are ready. Expense capture stays close.</p>
+            <button class="entry-tile" type="button" data-go="kakeibo-home" aria-label="Open Kakeibo planning">
+              <span class="entry-mark" aria-hidden="true">K</span>
+              <span class="entry-copy"><strong>Kakeibo planning</strong><small id="dashboard-kakeibo-summary">Make this month's plan.</small></span>
+              <span class="entry-arrow" aria-hidden="true">›</span>
+            </button>
+            <div class="section-heading"><h3>Still close at hand</h3></div>
+            <div class="card">
+              <strong style="font-size:12px">Add expense</strong>
+              <p style="margin:5px 0 0;color:var(--muted)">The existing amount-first capture flow remains a direct dashboard action. Details stay optional.</p>
+              <a class="text-button" href="../002-daily-expense-capture/ui-mockups.html">View amount-first capture reference</a>
+            </div>
+            <div class="callout neutral">Kakeibo is a proposed feature destination. This prototype does not change the existing dashboard or expense flow.</div>
+          </section>
+
+          <section class="screen" id="kakeibo-home" aria-labelledby="kakeibo-title" hidden>
+            <div class="step">Mindful spending</div>
+            <h2 id="kakeibo-title" tabindex="-1">A plan that feels like yours.</h2>
+            <p class="sub">Choose what matters this month, then check in without judgment.</p>
+            <div class="card soft">
+              <div class="step">October 2026 · sample month</div>
+              <h3 id="home-plan-status" style="margin-top:8px">Your plan is ready to begin.</h3>
+              <p id="home-plan-summary" style="margin:6px 0 0;color:var(--muted)">Choose an amount to work with and set your savings intention.</p>
+            </div>
+            <div class="learning-prompt" id="learning-prompt">
+              <strong style="font-size:11px">New to Kakeibo?</strong>
+              <p>A few visual slides can introduce the method. You can skip them and plan now.</p>
+              <div class="learning-actions">
+                <button class="text-button" id="start-learning" type="button">Explore the slides</button>
+                <button class="text-button" id="dismiss-learning" type="button">Not now</button>
+              </div>
+            </div>
+            <div class="category-list">
+              <button class="entry-tile" type="button" data-go="progress-screen">
+                <span class="entry-mark" aria-hidden="true">◎</span>
+                <span class="entry-copy"><strong>See this month's progress</strong><small>Planned and recorded amounts, by category.</small></span>
+                <span class="entry-arrow" aria-hidden="true">›</span>
+              </button>
+              <button class="entry-tile" type="button" data-go="reflection-screen">
+                <span class="entry-mark" aria-hidden="true">↺</span>
+                <span class="entry-copy"><strong>Reflect on a period</strong><small>Review what went well and what you may change.</small></span>
+                <span class="entry-arrow" aria-hidden="true">›</span>
+              </button>
+            </div>
+            <button class="text-button" id="learn-kakeibo" type="button" style="width:100%">Learn about Kakeibo</button>
+            <p class="feedback" id="home-feedback" role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="screen" id="intro-screen" aria-labelledby="intro-title" hidden>
+            <div class="step">A short introduction · optional</div>
+            <h2 id="intro-title" tabindex="-1">A mindful plan starts with noticing.</h2>
+            <p class="sub" id="intro-copy">Kakeibo helps make spending choices more intentional, without judging them.</p>
+            <div class="card soft" id="intro-visual" aria-live="polite"></div>
+            <div class="summary-row"><span id="intro-step">Slide 1 of 3</span><strong>Learn at your pace</strong></div>
+            <div class="amount-row">
+              <button class="secondary" id="intro-back" type="button">‹ Back</button>
+              <button class="secondary" id="intro-next" type="button">Next ›</button>
+            </div>
+            <button class="primary" id="intro-plan" type="button">Plan this month</button>
+            <button class="text-button" id="skip-intro" type="button" style="width:100%">Skip slides</button>
+          </section>
+
+          <section class="screen" id="planner-screen" aria-labelledby="planner-title" hidden>
+            <div class="step">October 2026 · monthly plan</div>
+            <h2 id="planner-title" tabindex="-1">Make room for what matters.</h2>
+            <p class="sub">Use your preferred currency · sample profile: INR. Your amounts are intentions, not money moved or reserved.</p>
+            <label class="field" for="use-available"><span class="label">Overall amount available (optional)</span>
+              <span class="check-row"><input id="use-available" type="checkbox" checked> Include an overall amount</span></label>
+            <label class="field" id="available-field" for="available-amount">
+              <span class="money-input"><span>₹</span><input id="available-amount" type="number" min="0" step="0.01" value="45000" inputmode="decimal"></span>
+            </label>
+            <label class="field" for="savings-goal"><span class="label">Savings intention</span>
+              <span class="money-input"><span>₹</span><input id="savings-goal" type="number" min="0" step="0.01" value="8000" inputmode="decimal"></span>
+              <span class="hint">A goal you set for yourself; no transfer is made.</span></label>
+            <fieldset class="card" style="margin-top:14px">
+              <legend style="font-size:11px;font-weight:650;padding:0 4px">Category limits</legend>
+              <div class="category-plan"><label for="cat-needs">Needs</label><div class="category-slider"><input id="range-needs" type="range" min="0" max="100000" step="0.01" value="16000" aria-label="Needs planned amount slider"><input id="cat-needs" type="number" min="0" step="0.01" value="16000" inputmode="decimal" aria-label="Needs exact planned amount"><output class="category-value" id="value-needs" aria-live="polite"></output></div></div>
+              <div class="category-plan"><label for="cat-wants">Wants</label><div class="category-slider"><input id="range-wants" type="range" min="0" max="100000" step="0.01" value="8000" aria-label="Wants planned amount slider"><input id="cat-wants" type="number" min="0" step="0.01" value="8000" inputmode="decimal" aria-label="Wants exact planned amount"><output class="category-value" id="value-wants" aria-live="polite"></output></div></div>
+              <div class="category-plan"><label for="cat-culture">Culture</label><div class="category-slider"><input id="range-culture" type="range" min="0" max="100000" step="0.01" value="5000" aria-label="Culture planned amount slider"><input id="cat-culture" type="number" min="0" step="0.01" value="5000" inputmode="decimal" aria-label="Culture exact planned amount"><output class="category-value" id="value-culture" aria-live="polite"></output></div></div>
+              <div class="category-plan"><label for="cat-unexpected">Unexpected</label><div class="category-slider"><input id="range-unexpected" type="range" min="0" max="100000" step="0.01" value="4000" inputmode="decimal" aria-label="Unexpected planned amount slider"><input id="cat-unexpected" type="number" min="0" step="0.01" value="4000" inputmode="decimal" aria-label="Unexpected exact planned amount"><output class="category-value" id="value-unexpected" aria-live="polite"></output></div></div>
+            </fieldset>
+            <div class="card soft" id="plan-totals" aria-live="polite"></div>
+            <p class="feedback" id="planner-feedback" role="alert"></p>
+            <button class="secondary" id="open-weekly" type="button" style="width:100%">Add optional weekly pacing</button>
+          </section>
+
+          <section class="screen" id="weekly-screen" aria-labelledby="weekly-title" hidden>
+            <div class="step">Optional · part of the monthly plan</div>
+            <h2 id="weekly-title" tabindex="-1">Pace it week by week.</h2>
+            <p class="sub">October 2026 · sample locale weeks. Enter zero or leave a week blank if it has no planned amount.</p>
+            <div class="callout neutral">Weekly amounts are part of each monthly category limit, not extra funds. Calendar dates show partial weeks.</div>
+            <div id="weekly-categories"></div>
+            <p class="feedback" id="weekly-feedback" role="alert"></p>
+            <button class="primary" id="save-weekly" type="button">Save weekly pacing</button>
+            <button class="text-button" id="skip-weekly" type="button" style="width:100%">Skip weekly pacing</button>
+          </section>
+
+          <section class="screen" id="review-screen" aria-labelledby="review-title" hidden>
+            <div class="step">Review before saving</div>
+            <h2 id="review-title" tabindex="-1">Your month, at a glance.</h2>
+            <p class="sub">Check these amounts before they become your plan.</p>
+            <div class="card" id="review-plan"></div>
+            <div class="callout neutral">This changes only your plan. Existing saved expenses are kept as recorded.</div>
+            <p class="feedback" id="review-feedback" role="alert"></p>
+            <button class="primary" id="confirm-plan" type="button">Save this plan</button>
+            <button class="text-button" id="edit-plan" type="button" style="width:100%">Go back and edit</button>
+          </section>
+
+          <section class="screen" id="progress-screen" aria-labelledby="progress-title" hidden>
+            <div class="step">October 2026 · sample data</div>
+            <h2 id="progress-title" tabindex="-1">How your plan is going.</h2>
+            <p class="sub">Recorded spending is compared with the category limits you chose.</p>
+            <div class="card soft" id="progress-overview"></div>
+            <div id="progress-categories"></div>
+            <div class="section-heading"><h3>Not included in category totals</h3></div>
+            <div id="progress-exceptions"></div>
+            <p class="feedback" id="progress-feedback" role="status" aria-live="polite"></p>
+            <button class="secondary" id="edit-current-plan" type="button" style="width:100%">Review or change plan</button>
+            <button class="primary" id="start-reflection" type="button" style="margin-top:8px">Reflect on this period</button>
+          </section>
+
+          <section class="screen" id="category-detail-screen" aria-labelledby="category-title" hidden>
+            <div class="step">October 2026 · category detail</div>
+            <h2 id="category-title" tabindex="-1">Needs</h2>
+            <div class="card soft" id="category-summary"></div>
+            <div class="section-heading"><h3>Spending by day</h3><span class="step">October · INR</span></div>
+            <div class="card">
+              <svg id="category-chart" class="daily-chart" viewBox="0 0 310 120" role="img"></svg>
+              <div class="chart-labels"><span>Oct 1</span><span>Oct 31</span></div>
+              <p id="category-chart-empty" class="feedback" hidden>No category expenses recorded this month.</p>
+            </div>
+            <div class="section-heading"><h3>Unassigned expenses</h3><span class="step">Same month · same currency</span></div>
+            <div class="card" id="assignable-expenses"></div>
+            <p class="feedback" id="assignment-feedback" role="alert"></p>
+            <button class="primary" id="confirm-assignment" type="button">Assign selected expense</button>
+            <button class="secondary" id="cancel-assignment" type="button" style="width:100%;margin-top:8px">Cancel</button>
+            <button class="text-button" id="return-categories" type="button" style="width:100%">‹ All categories</button>
+          </section>
+
+          <section class="screen" id="reflection-screen" aria-labelledby="reflection-title" hidden>
+            <div class="step">October 2026 · a gentle review</div>
+            <h2 id="reflection-title" tabindex="-1">What did you notice?</h2>
+            <p class="sub">Use your own words. This is for learning, not judging yourself.</p>
+            <div class="card soft" id="reflection-summary"></div>
+            <label class="field reflection-answer" for="reflection-well">
+              <span class="label">What went well for you?</span><textarea id="reflection-well" rows="2"></textarea></label>
+            <label class="field reflection-answer" for="reflection-change">
+              <span class="label">What might you do differently?</span><textarea id="reflection-change" rows="2"></textarea></label>
+            <label class="field reflection-answer" for="reflection-next">
+              <span class="label">What would you like to improve next period?</span><textarea id="reflection-next" rows="2"></textarea></label>
+            <p class="feedback" id="reflection-feedback" role="status" aria-live="polite"></p>
+            <button class="primary" id="save-reflection" type="button">Save reflection</button>
+            <button class="text-button" id="skip-reflection" type="button" style="width:100%">Not now</button>
+          </section>
+
+          <section class="screen" id="saved-reflection-screen" aria-labelledby="saved-reflection-title" hidden>
+            <div class="step">Saved reflection · sample session</div>
+            <h2 id="saved-reflection-title" tabindex="-1">A note for next month.</h2>
+            <p class="sub">Your reflection is shown alongside current expense totals. It does not change expense records.</p>
+            <div class="card soft" id="saved-reflection-content"></div>
+            <button class="secondary" id="return-progress" type="button" style="width:100%">Back to plan progress</button>
+            <button class="text-button" id="edit-reflection" type="button" style="width:100%">Edit reflection</button>
+          </section>
+        </div>
+        <div class="footer">
+          <div class="footer-actions">
+            <button class="primary" id="main-action" type="button" hidden></button>
+            <button class="secondary" id="back-dashboard" type="button" hidden>‹ Kakeibo home</button>
+          </div>
+          <p class="footnote" id="footer-note">Select Kakeibo planning from the proposed dashboard destination.</p>
+          <div class="homebar" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <aside class="prototype-notes" aria-label="Flow notes">
+        <div class="eyebrow">Flow notes</div>
+        <h2>A new destination, familiar paths.</h2>
+        <ul>
+          <li>Open the Kakeibo destination from the post-profile dashboard; amount-first expense capture remains available there and is not replaced.</li>
+          <li>The introduction can be skipped or revisited. Planning never depends on completing a tutorial.</li>
+          <li>Plan totals and weekly pacing validate before a review-and-confirm step. A failed save keeps the draft for retry.</li>
+          <li>Progress uses saved same-currency expenses; unassigned and other-currency amounts remain separate. Overspending appears as a negative balance and is named.</li>
+          <li>Reflection can be postponed. Saving and reopening the review are simulated in memory only.</li>
+          <li>Existing Phase 1 profile and Phase 2 expense interactions are referenced, not duplicated or changed.</li>
+        </ul>
+        <p>Visual continuity references:
+          <a href="../003-dashboard-navigation/ui-mockups.html">Dashboard navigation mockup</a> ·
+          <a href="../002-daily-expense-capture/ui-mockups.html">Expense capture and history mockup</a>.
+        </p>
+      </aside>
+    </div>
+
+    <footer class="board-footer">
+      Interactive design prototype · reference viewport 390 × 844 · no external fonts, libraries, or network requests.<br>
+      Synthetic sample data and temporary plan/reflection state are held in memory for this page session. This mockup does not save real data, move money, convert currencies, or implement secure local storage.
+    </footer>
+  </main>
+  <script>
+    const byId = id => document.getElementById(id);
+    const categories = [
+      { id: "needs", name: "Needs" },
+      { id: "wants", name: "Wants" },
+      { id: "culture", name: "Culture" },
+      { id: "unexpected", name: "Unexpected" }
+    ];
+    const sampleSpent = { needs: 12300, wants: 6250, culture: 1500, unexpected: 0 };
+    const weekDates = ["Oct 1–3", "Oct 4–10", "Oct 11–17", "Oct 18–24", "Oct 25–31"];
+    let activeScreen = "dashboard-screen";
+    let previewState = new URLSearchParams(location.search).get("state") || "normal";
+    let planSaved = true;
+    let weeklySaved = false;
+    let weeklyDraft = {};
+    let reflectionSaved = null;
+    let reflectionDraft = { well: "", change: "", next: "" };
+    let learningPromptDismissed = false;
+    let introSlide = 0;
+    let selectedCategory = "needs";
+    let selectedExpense = false;
+    let assignmentComplete = false;
+
+    const amount = value => Number(value || 0);
+    const optionalAmount = value => value === "" ? 0 : Number(value);
+    const money = value => new Intl.NumberFormat("en-IN", {
+      style: "currency", currency: "INR", maximumFractionDigits: 2
+    }).format(value);
+    const esc = value => String(value).replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
+    function feedback(id, text, type = "") {
+      const node = byId(id);
+      node.textContent = text;
+      node.className = `feedback${type ? ` ${type}` : ""}`;
+    }
+    function planValues() {
+      return {
+        available: byId("use-available").checked ? optionalAmount(byId("available-amount").value) : null,
+        savings: amount(byId("savings-goal").value),
+        categories: Object.fromEntries(categories.map(category => [
+          category.id, amount(byId(`cat-${category.id}`).value)
+        ]))
+      };
+    }
+    function calcPlan() {
+      const values = planValues();
+      const categoryTotal = Object.values(values.categories).reduce((sum, n) => sum + n, 0);
+      const allocated = values.savings + categoryTotal;
+      return { ...values, categoryTotal, allocated,
+        unassigned: values.available === null ? null : values.available - allocated };
+    }
+    function renderPlanTotals() {
+      const plan = calcPlan();
+      categories.forEach(category => {
+        byId(`value-${category.id}`).textContent = `Current amount ${money(plan.categories[category.id])}`;
+      });
+      byId("plan-totals").innerHTML = `
+        <div class="summary-row"><span>Savings intention</span><strong>${money(plan.savings)}</strong></div>
+        <div class="summary-row"><span>Allocated to categories</span><strong>${money(plan.categoryTotal)}</strong></div>
+        ${plan.available === null ? `<div class="summary-row"><span>Overall available</span><strong>Not provided</strong></div>` :
+          `<div class="summary-row"><span>Overall available</span><strong>${money(plan.available)}</strong></div>
+          <div class="summary-row"><span>Not yet assigned</span><strong>${money(plan.unassigned)}</strong></div>`}
+        <p style="margin:7px 0 0;color:var(--muted)">Category limits and savings intention ${plan.available === null ? "are planned without an overall total." : "are included in the available amount."}</p>`;
+      byId("available-field").hidden = !byId("use-available").checked;
+      byId("available-amount").disabled = !byId("use-available").checked;
+    }
+    function validPlan() {
+      const plan = calcPlan();
+      const rawFields = ["savings-goal", ...categories.map(c => `cat-${c.id}`)];
+      if (byId("use-available").checked) rawFields.push("available-amount");
+      if (rawFields.some(id => byId(id).value.trim() === "" || amount(byId(id).value) < 0)) {
+        feedback("planner-feedback", "Enter zero or a positive amount in each field. Your entries are still here.", "error");
+        return false;
+      }
+      if (plan.unassigned !== null && plan.unassigned < 0) {
+        feedback("planner-feedback", `Your savings intention and category limits exceed the available amount by ${money(Math.abs(plan.unassigned))}. Adjust an amount before continuing.`, "error");
+        byId("available-amount").focus();
+        return false;
+      }
+      feedback("planner-feedback", "");
+      return true;
+    }
+    function showScreen(id) {
+      activeScreen = id;
+      document.querySelectorAll(".screen").forEach(screen => { screen.hidden = screen.id !== id; });
+      const onDashboard = id === "dashboard-screen";
+      byId("back-dashboard").hidden = onDashboard;
+      byId("main-action").hidden = !(id === "planner-screen");
+      byId("main-action").textContent = "Review plan";
+      const notes = {
+        "dashboard-screen": "Kakeibo dashboard tile is a proposed feature integration.",
+        "kakeibo-home": "Plan, progress, and reflection are separate, revisitable actions.",
+        "intro-screen": "Optional introduction · skipping keeps planning available.",
+        "planner-screen": "Plan save is simulated; entered values remain until reset.",
+        "weekly-screen": "Weekly amounts are validated against monthly limits.",
+        "review-screen": "Confirm the plan only after reviewing the totals.",
+        "progress-screen": "Sample progress is recalculated from the synthetic expense list.",
+        "category-detail-screen": "Category chart and assignment use synthetic sample expenses.",
+        "reflection-screen": "Reflection is optional; leave without changing the plan.",
+        "saved-reflection-screen": "Saved reflection is temporary sample state."
+      };
+      byId("footer-note").textContent = notes[id] || "";
+      renderCurrent();
+      const heading = document.querySelector(`#${id} h2`);
+      if (heading) heading.focus({ preventScroll: true });
+      byId("screen-content").scrollTop = 0;
+    }
+    function renderWeekly() {
+      const root = byId("weekly-categories");
+      root.replaceChildren();
+      categories.forEach(category => {
+        const section = document.createElement("section");
+        section.className = "card";
+        const title = document.createElement("h3");
+        title.textContent = category.name;
+        section.append(title);
+        const grid = document.createElement("div");
+        grid.className = "week-grid";
+        weekDates.forEach((date, index) => {
+          const label = document.createElement("label");
+          label.className = "week-entry";
+          label.append(document.createTextNode(date));
+          const input = document.createElement("input");
+          input.type = "number";
+          input.min = "0";
+          input.step = "0.01";
+          input.inputMode = "decimal";
+          input.setAttribute("aria-label", `${category.name}, week ${index + 1}, ${date}`);
+          input.dataset.weekCategory = category.id;
+          input.dataset.week = String(index + 1);
+          input.value = getWeekValue(category.id, index + 1);
+          input.addEventListener("input", () => {
+            weeklyDraft[`${category.id}-${index + 1}`] = input.value;
+            renderWeekTotal(category.id);
+          });
+          label.append(input);
+          grid.append(label);
+        });
+        section.append(grid);
+        const total = document.createElement("div");
+        total.className = "week-total";
+        total.id = `week-total-${category.id}`;
+        section.append(total);
+        root.append(section);
+        renderWeekTotal(category.id);
+      });
+    }
+    function getWeekValue(categoryId, weekNumber) {
+      const key = `${categoryId}-${weekNumber}`;
+      if (weeklyDraft[key] !== undefined) return weeklyDraft[key];
+      const sample = { needs: [3200, 3400, 3300, 3200, 2900], wants: [1500, 1700, 1400, 1600, 1200],
+        culture: [800, 1000, 900, 800, 700], unexpected: [800, 800, 800, 800, 800] };
+      return sample[categoryId][weekNumber - 1];
+    }
+    function renderWeekTotal(categoryId) {
+      const fields = [...document.querySelectorAll(`[data-week-category="${categoryId}"]`)];
+      const total = fields.reduce((sum, field) => sum + amount(field.value), 0);
+      const cap = planValues().categories[categoryId];
+      const output = byId(`week-total-${categoryId}`);
+      if (output) output.innerHTML = `<span>Weekly total ${money(total)}</span><span>Monthly limit ${money(cap)}</span>`;
+    }
+    function validateWeekly() {
+      for (const category of categories) {
+        const fields = [...document.querySelectorAll(`[data-week-category="${category.id}"]`)];
+        if (fields.some(field => field.value.trim() !== "" && amount(field.value) < 0)) {
+          feedback("weekly-feedback", "Use zero or a positive amount for each calendar week. Your entries are still here.", "error");
+          return false;
+        }
+        const sum = fields.reduce((total, field) => total + amount(field.value), 0);
+        const cap = planValues().categories[category.id];
+        if (sum > cap) {
+          feedback("weekly-feedback", `${category.name} weekly amounts total ${money(sum)}, above the monthly limit of ${money(cap)}. Adjust the weekly amounts.`, "error");
+          return false;
+        }
+      }
+      feedback("weekly-feedback", "");
+      return true;
+    }
+    function saveWeeklyDraft() {
+      if (!validPlan() || !validateWeekly()) return;
+      weeklySaved = true;
+      feedback("planner-feedback", "Weekly pacing saved in this mockup. You can still change the monthly plan.", "success");
+      showScreen("planner-screen");
+    }
+    function renderReview() {
+      const plan = calcPlan();
+      byId("review-plan").innerHTML = `
+        ${plan.available === null ? `<div class="summary-row"><span>Overall amount</span><strong>Not provided</strong></div>` :
+          `<div class="summary-row"><span>Available this month</span><strong>${money(plan.available)}</strong></div>`}
+        <div class="summary-row"><span>Savings intention</span><strong>${money(plan.savings)}</strong></div>
+        ${categories.map(c => `<div class="summary-row"><span>${c.name}</span><strong>${money(plan.categories[c.id])}</strong></div>`).join("")}
+        <div class="summary-row"><span>Total category allocation</span><strong>${money(plan.categoryTotal)}</strong></div>
+        ${plan.unassigned === null ? "" : `<div class="summary-row"><span>Not yet assigned</span><strong>${money(plan.unassigned)}</strong></div>`}
+        <div class="summary-row"><span>Weekly pacing</span><strong>${weeklySaved ? "Optional amounts included" : "Not set"}</strong></div>`;
+    }
+    function currentSpent() {
+      const spent = { ...sampleSpent };
+      if (previewState === "overspend") spent.wants = 10500;
+      if (previewState === "empty") Object.keys(spent).forEach(key => { spent[key] = 0; });
+      if (assignmentComplete) spent[selectedCategory] += 750;
+      return spent;
+    }
+    function categoryHealth(cap, used) {
+      if (cap === 0 && used === 0) return { label: "No allocation", mark: "—", over: false };
+      if (used > cap) return { label: "Over plan", mark: "!", over: true };
+      if (used === cap) return { label: "At limit", mark: "=", over: false };
+      return { label: "Within plan", mark: "✓", over: false };
+    }
+    function renderDashboard() {
+      const summary = byId("dashboard-kakeibo-summary");
+      if (previewState === "summary-unavailable") {
+        summary.textContent = "Monthly summary unavailable · open Kakeibo";
+      } else if (!planSaved) {
+        summary.textContent = "Plan for this month · a gentle reminder";
+      } else {
+        const spent = currentSpent();
+        const plan = calcPlan();
+        const totalSpent = Object.values(spent).reduce((sum, value) => sum + value, 0);
+        const totalPlanned = plan.categoryTotal;
+        const statuses = categories.map(category => categoryHealth(plan.categories[category.id], spent[category.id]));
+        const status = statuses.find(item => item.over)?.label || statuses.find(item => item.label === "At limit")?.label ||
+          (statuses.every(item => item.label === "No allocation") ? "No allocation" : "Within plan");
+        summary.textContent = `${money(totalSpent)} of ${money(totalPlanned)} categorized · ${status}`;
+      }
+    }
+    function renderHome() {
+      byId("home-plan-status").textContent = planSaved ? "Your October plan is ready." : "Plan for this month when you are ready.";
+      byId("home-plan-summary").textContent = planSaved
+        ? `${money(calcPlan().categoryTotal)} allocated across categories.`
+        : "You can still see saved expenses and create a monthly plan at any time.";
+      byId("learning-prompt").hidden = learningPromptDismissed;
+    }
+    function renderIntro() {
+      const slides = [
+        ["A mindful plan starts with noticing.", "Kakeibo helps make spending choices more intentional, without judging them.",
+          "<strong>Pause, then choose.</strong><p>Notice what matters before deciding how to use your money.</p>"],
+        ["Four categories, one personal plan.", "Use the categories as flexible prompts. Choose the labels that make sense to you.",
+          "<strong>Needs · Wants · Culture · Unexpected</strong><p>Everyday essentials · chosen extras · learning and joy · unplanned costs.</p>"],
+        ["Check in and learn as you go.", "Compare your plan with recorded expenses, then reflect on what you may want next month.",
+          "<strong>Your plan can change.</strong><p>Set monthly category amounts, review daily patterns, and make the next plan yours.</p>"]
+      ];
+      const slide = slides[introSlide];
+      byId("intro-title").textContent = slide[0];
+      byId("intro-copy").textContent = slide[1];
+      byId("intro-visual").innerHTML = slide[2];
+      byId("intro-step").textContent = `Slide ${introSlide + 1} of ${slides.length}`;
+      byId("intro-back").disabled = introSlide === 0;
+      byId("intro-next").textContent = introSlide === slides.length - 1 ? "Finish ›" : "Next ›";
+    }
+    function renderProgress() {
+      const plan = calcPlan();
+      const spent = currentSpent();
+      if (previewState === "no-plan" && !planSaved) {
+        byId("progress-overview").innerHTML = `<strong style="font-size:12px">No plan for this month yet</strong><p style="margin:6px 0 0;color:var(--muted)">You can still review saved expenses or create a plan now. Existing entries stay unchanged.</p>`;
+      } else {
+        byId("progress-overview").innerHTML = `
+          <div class="summary-row"><span>Total category allocation</span><strong>${money(plan.categoryTotal)}</strong></div>
+          ${plan.available === null ? "" : `<div class="summary-row"><span>Not yet assigned</span><strong>${money(plan.unassigned)}</strong></div>`}`;
+      }
+      const root = byId("progress-categories");
+      root.replaceChildren();
+      categories.forEach(category => {
+        const cap = planSaved ? plan.categories[category.id] : 0;
+        const used = spent[category.id];
+        const remaining = cap - used;
+        const health = !planSaved ? { label: "No plan", mark: "?", over: false } : categoryHealth(cap, used);
+        const over = health.over;
+        const ratio = cap > 0 ? Math.min(100, (used / cap) * 100) : used > 0 ? 100 : 0;
+        const article = document.createElement("article");
+        article.className = "category-progress";
+        article.innerHTML = `
+          <div class="progress-top"><strong>${category.name}</strong><span>Allocated ${planSaved ? money(cap) : "No plan"}</span></div>
+          <div class="progress-track" aria-hidden="true"><div class="progress-fill${over ? " over" : ""}" style="width:${ratio}%"></div></div>
+          <div class="progress-detail"><span>Spent ${money(used)}</span><span>Remaining ${planSaved ? money(remaining) : "—"}</span></div>
+          <div class="health${over ? " over" : ""}"><span class="health-mark" aria-hidden="true">${health.mark}</span>${health.label}</div>
+          <button class="text-button" type="button" data-category="${category.id}">View ${category.name} details</button>`;
+        article.setAttribute("aria-label", `${category.name}: ${health.label}; allocated ${planSaved ? money(cap) : "no plan"}, spent ${money(used)}, remaining ${planSaved ? money(remaining) : "not available"}`);
+        root.append(article);
+      });
+      root.querySelectorAll("[data-category]").forEach(button => button.addEventListener("click", () => {
+        selectedCategory = button.dataset.category;
+        assignmentComplete = false;
+        showScreen("category-detail-screen");
+      }));
+      const exceptions = byId("progress-exceptions");
+      exceptions.replaceChildren();
+      if (previewState === "empty") {
+        const empty = document.createElement("div");
+        empty.className = "callout neutral";
+        empty.textContent = "No expenses recorded for this period yet. Category spending is zero; the plan remains unchanged.";
+        exceptions.append(empty);
+      } else {
+        const local = document.createElement("div");
+        local.className = "summary-row";
+        local.innerHTML = `<span>Unassigned expenses</span><strong>${money(assignmentComplete ? 0 : 750)}</strong>`;
+        exceptions.append(local);
+        const foreign = document.createElement("div");
+        foreign.className = "summary-row";
+        foreign.innerHTML = `<span>Other currency · not converted</span><strong>€20.00</strong>`;
+        exceptions.append(foreign);
+      }
+      byId("edit-current-plan").textContent = planSaved ? "Review or change plan" : "Create a plan";
+      feedback("progress-feedback", previewState === "no-plan" && !planSaved
+        ? "Expenses can be viewed without first creating a plan." : "");
+    }
+    function renderCategoryDetail() {
+      const category = categories.find(item => item.id === selectedCategory);
+      if (!category) return;
+      const plan = calcPlan();
+      const used = currentSpent()[category.id];
+      const cap = planSaved ? plan.categories[category.id] : 0;
+      const remaining = cap - used;
+      const health = planSaved ? categoryHealth(cap, used) : { label: "No plan", mark: "?", over: false };
+      byId("category-title").textContent = category.name;
+      byId("category-summary").innerHTML = `
+        <div class="summary-row"><span>Allocated</span><strong>${planSaved ? money(cap) : "No plan"}</strong></div>
+        <div class="summary-row"><span>Total spent</span><strong>${money(used)}</strong></div>
+        <div class="summary-row"><span>Remaining</span><strong>${planSaved ? money(remaining) : "Not available without a plan"}</strong></div>
+        <div class="health${health.over ? " over" : ""}"><span class="health-mark" aria-hidden="true">${health.mark}</span>${health.label}</div>
+        ${health.over ? `<p class="overspend">Over plan by ${money(Math.abs(remaining))}</p>` : ""}`;
+      const daily = Array(31).fill(0);
+      if (previewState !== "empty") {
+        const proportions = [0.2, 0.25, 0.15, 0.24, 0.16];
+        [3, 8, 13, 19, 26].forEach((day, index) => { daily[day - 1] = Math.round(used * proportions[index]); });
+        daily[25] += used - daily.reduce((sum, value) => sum + value, 0);
+      }
+      const max = Math.max(1, ...daily);
+      const bars = daily.map((value, index) => {
+        const height = Math.max(value ? 3 : 1, Math.round((value / max) * 86));
+        const x = index * 10;
+        const y = 100 - height;
+        return `<rect x="${x}" y="${y}" width="6" height="${height}" rx="1"><title>October ${index + 1}: ${money(value)}</title></rect>`;
+      }).join("");
+      byId("category-chart").setAttribute("aria-label", `${category.name} daily spending, October 1 through 31, total ${money(used)}`);
+      byId("category-chart").innerHTML = `<line class="axis" x1="0" y1="100" x2="310" y2="100"></line>${bars}`;
+      byId("category-chart-empty").hidden = used !== 0;
+      byId("assignable-expenses").innerHTML = previewState === "empty"
+        ? `<p>No unassigned expenses are available for this month.</p>`
+        : assignmentComplete
+        ? `<p>No unassigned expenses remain in this sample.</p>`
+        : `<label class="expense-choice"><input type="checkbox" id="select-unassigned" ${selectedExpense ? "checked" : ""}>
+          <span>Oct 18 · Corner shop · ${money(750)}<br><span class="hint">No Kakeibo category assigned</span></span></label>
+          <p class="hint">Only this month's INR expense is eligible. Selection does not change it until confirmed.</p>`;
+      byId("confirm-assignment").disabled = assignmentComplete || previewState === "empty";
+      byId("confirm-assignment").textContent = assignmentComplete ? "Expense assigned" : "Assign selected expense";
+      byId("cancel-assignment").disabled = assignmentComplete || previewState === "empty";
+      const checkbox = byId("select-unassigned");
+      if (checkbox) checkbox.addEventListener("change", () => { selectedExpense = checkbox.checked; });
+      feedback("assignment-feedback", previewState === "assignment-failure" && selectedExpense
+        ? "Could not assign this expense. It remains unassigned; you can retry." : "", previewState === "assignment-failure" && selectedExpense ? "error" : "");
+    }
+    function renderReflectionSummary() {
+      const plan = calcPlan();
+      byId("reflection-summary").innerHTML = `<strong style="font-size:11px">Current recorded spending</strong>
+        ${categories.map(category => `<div class="summary-row"><span>${category.name}</span><strong>${money(currentSpent()[category.id])} of ${money(plan.categories[category.id])}</strong></div>`).join("")}
+        <p style="margin:8px 0 0;color:var(--muted)">These are current expense totals. Your saved answers stay your own and are not rewritten if expenses change.</p>`;
+    }
+    function renderSavedReflection() {
+      const answers = reflectionSaved || reflectionDraft;
+      const labels = [["What went well", answers.well], ["What might change", answers.change], ["Next period", answers.next]];
+      byId("saved-reflection-content").innerHTML = labels.map(([label, value]) =>
+        `<div class="summary-row"><span>${label}</span><strong>${value ? esc(value) : "No answer added"}</strong></div>`).join("");
+    }
+    function renderCurrent() {
+      renderPlanner();
+      renderDashboard();
+      renderHome();
+      renderIntro();
+      renderWeekly();
+      renderReview();
+      renderProgress();
+      renderCategoryDetail();
+      renderReflectionSummary();
+      renderSavedReflection();
+    }
+    function renderPlanner() {
+      renderPlanTotals();
+    }
+    document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => {
+      if (button.dataset.go === "progress-screen" && previewState === "no-plan" && !planSaved) {
+        showScreen("progress-screen");
+        return;
+      }
+      showScreen(button.dataset.go);
+    }));
+    byId("dashboard-home").addEventListener("click", () => showScreen("dashboard-screen"));
+    byId("back-dashboard").addEventListener("click", () => showScreen("kakeibo-home"));
+    function openLearning() {
+      learningPromptDismissed = true;
+      introSlide = 0;
+      showScreen("intro-screen");
+    }
+    byId("learn-kakeibo").addEventListener("click", openLearning);
+    byId("start-learning").addEventListener("click", openLearning);
+    byId("dismiss-learning").addEventListener("click", () => {
+      learningPromptDismissed = true;
+      renderCurrent();
+      feedback("home-feedback", "You can learn about Kakeibo from this home screen any time.");
+    });
+    byId("intro-back").addEventListener("click", () => {
+      introSlide = Math.max(0, introSlide - 1);
+      renderIntro();
+    });
+    byId("intro-next").addEventListener("click", () => {
+      if (introSlide < 2) {
+        introSlide += 1;
+        renderIntro();
+      } else {
+        learningPromptDismissed = true;
+        showScreen("planner-screen");
+      }
+    });
+    byId("intro-plan").addEventListener("click", () => {
+      learningPromptDismissed = true;
+      showScreen("planner-screen");
+    });
+    byId("skip-intro").addEventListener("click", () => {
+      learningPromptDismissed = true;
+      showScreen("planner-screen");
+    });
+    byId("main-action").addEventListener("click", () => {
+      if (activeScreen === "planner-screen" && validPlan()) {
+        renderReview();
+        showScreen("review-screen");
+      }
+    });
+    byId("use-available").addEventListener("change", () => {
+      renderCurrent();
+      feedback("planner-feedback", "");
+    });
+    ["available-amount", "savings-goal", ...categories.map(c => `cat-${c.id}`)].forEach(id => {
+      byId(id).addEventListener("input", () => {
+        if (id.startsWith("cat-")) {
+          const range = byId(`range-${id.slice(4)}`);
+          const value = amount(byId(id).value);
+          if (value > Number(range.max)) range.max = String(Math.ceil(value / 5000) * 5000);
+          range.value = byId(id).value;
+        }
+        renderCurrent();
+        feedback("planner-feedback", "");
+        if (weeklySaved) weeklySaved = false;
+      });
+    });
+    categories.forEach(category => byId(`range-${category.id}`).addEventListener("input", event => {
+      byId(`cat-${category.id}`).value = event.target.value;
+    renderCurrent();
+      feedback("planner-feedback", "");
+      if (weeklySaved) weeklySaved = false;
+    }));
+    byId("open-weekly").addEventListener("click", () => {
+      if (validPlan()) showScreen("weekly-screen");
+    });
+    byId("save-weekly").addEventListener("click", saveWeeklyDraft);
+    byId("skip-weekly").addEventListener("click", () => {
+      weeklySaved = false;
+      showScreen("planner-screen");
+      feedback("planner-feedback", "Weekly pacing skipped. Your monthly plan is complete without it.");
+    });
+    byId("edit-plan").addEventListener("click", () => showScreen("planner-screen"));
+    byId("confirm-plan").addEventListener("click", () => {
+      if (previewState === "plan-failure") {
+        feedback("review-feedback", "Could not save this plan. Your previous plan remains unchanged; your entered amounts are kept for retry.", "error");
+        return;
+      }
+      planSaved = true;
+      feedback("review-feedback", "");
+      feedback("home-feedback", "Plan saved in this mockup session. Existing expenses were not changed.", "success");
+      showScreen("progress-screen");
+    });
+    byId("edit-current-plan").addEventListener("click", () => showScreen("planner-screen"));
+    byId("confirm-assignment").addEventListener("click", () => {
+      if (!selectedExpense || assignmentComplete) {
+        feedback("assignment-feedback", "Select an eligible unassigned expense before assigning it.", "error");
+        return;
+      }
+      if (previewState === "assignment-failure") {
+        feedback("assignment-feedback", "Could not assign this expense. It remains unassigned; you can retry.", "error");
+        return;
+      }
+      assignmentComplete = true;
+      selectedExpense = false;
+      renderCurrent();
+      feedback("assignment-feedback", "Expense assigned to this category in the mockup session.", "success");
+    });
+    byId("cancel-assignment").addEventListener("click", () => {
+      selectedExpense = false;
+      showScreen("progress-screen");
+    });
+    byId("return-categories").addEventListener("click", () => showScreen("progress-screen"));
+    byId("start-reflection").addEventListener("click", () => {
+      if (reflectionSaved) {
+        renderSavedReflection();
+        showScreen("saved-reflection-screen");
+      } else showScreen("reflection-screen");
+    });
+    [["reflection-well", "well"], ["reflection-change", "change"], ["reflection-next", "next"]].forEach(([id, key]) => {
+      byId(id).addEventListener("input", event => { reflectionDraft[key] = event.target.value; });
+    });
+    byId("save-reflection").addEventListener("click", () => {
+      if (previewState === "reflection-failure") {
+        feedback("reflection-feedback", "Could not save your reflection. Your answers are still here; you can retry.", "error");
+        return;
+      }
+      reflectionSaved = { ...reflectionDraft };
+      feedback("reflection-feedback", "Reflection saved in this mockup session.", "success");
+      renderSavedReflection();
+      showScreen("saved-reflection-screen");
+    });
+    byId("skip-reflection").addEventListener("click", () => showScreen("progress-screen"));
+    byId("return-progress").addEventListener("click", () => showScreen("progress-screen"));
+    byId("edit-reflection").addEventListener("click", () => {
+      reflectionDraft = { ...(reflectionSaved || reflectionDraft) };
+      byId("reflection-well").value = reflectionDraft.well;
+      byId("reflection-change").value = reflectionDraft.change;
+      byId("reflection-next").value = reflectionDraft.next;
+      showScreen("reflection-screen");
+    });
+    byId("preview-state").addEventListener("change", event => {
+      previewState = event.target.value;
+      history.replaceState(null, "", `${location.pathname}?state=${encodeURIComponent(previewState)}`);
+      if (previewState === "no-plan") planSaved = false;
+      else planSaved = true;
+      if (previewState === "validation") {
+        byId("use-available").checked = true;
+        byId("available-amount").value = "30000";
+      } else {
+        byId("available-amount").value = "45000";
+      }
+      assignmentComplete = false;
+      selectedExpense = false;
+      byId("preview-state").value = previewState;
+      showScreen(activeScreen);
+    });
+    function resetMockup() {
+      planSaved = true;
+      weeklySaved = false;
+      weeklyDraft = {};
+      reflectionSaved = null;
+      reflectionDraft = { well: "", change: "", next: "" };
+      byId("preview-state").value = "normal";
+      previewState = "normal";
+      history.replaceState(null, "", location.pathname);
+      byId("use-available").checked = true;
+      byId("available-amount").value = "45000";
+      byId("savings-goal").value = "8000";
+      byId("cat-needs").value = "16000";
+      byId("cat-wants").value = "8000";
+      byId("cat-culture").value = "5000";
+      byId("cat-unexpected").value = "4000";
+      categories.forEach(category => { byId(`range-${category.id}`).value = byId(`cat-${category.id}`).value; });
+      learningPromptDismissed = false;
+      introSlide = 0;
+      selectedCategory = "needs";
+      selectedExpense = false;
+      assignmentComplete = false;
+      ["reflection-well", "reflection-change", "reflection-next"].forEach(id => { byId(id).value = ""; });
+      showScreen("dashboard-screen");
+    }
+    byId("reset-mock").addEventListener("click", resetMockup);
+    byId("preview-state").value = ["normal", "no-plan", "validation", "overspend", "unassigned",
+      "assignment-failure", "plan-failure", "reflection-failure", "empty", "summary-unavailable"].includes(previewState)
+      ? previewState : "normal";
+    previewState = byId("preview-state").value;
+    if (previewState === "no-plan") planSaved = false;
+    if (previewState === "validation") byId("available-amount").value = "30000";
+    showScreen("dashboard-screen");
+  </script>
+</body>
+</html>

@@ -6,7 +6,9 @@ specification and this contract govern functional behavior.
 
 ## Entry and Navigation
 
-- A configured profile opens directly to amount capture.
+- After profile setup, ordinary app launch opens the dashboard. Its **Add expense**
+  action opens amount capture directly. An expense reminder notification requesting
+  capture continues to open amount capture directly.
 - The capture screen exposes a large locale-formatted amount, accessible numeric
   controls, a primary **Save expense** action, and a visually secondary
   **Add details now** action.

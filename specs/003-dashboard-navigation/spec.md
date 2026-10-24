@@ -13,6 +13,7 @@
 ### Session 2026-10-24
 
 - Q: How should users choose which dashboard options appear in the easy-to-reach primary area? → A: Users pin options into the primary area; all unpinned options are under More.
+- Q: After profile setup, should the dashboard replace direct-to-expense-capture as the normal app launch screen? → A: The dashboard replaces direct capture at ordinary launch; update Phase 2's launch expectation. Reminder notifications continue to open capture directly.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -29,8 +30,9 @@ action can be opened from it, including actions placed in the secondary area.
 
 **Acceptance Scenarios**:
 
-1. **Given** I have completed profile setup, **When** I open the app, **Then** I see a
-   dashboard with the modules and actions available in my version of NestVest.
+1. **Given** I have completed profile setup, **When** I open the app normally,
+   **Then** I see the dashboard with modules and actions available in my version of
+   NestVest. A reminder notification requesting expense capture opens capture directly.
 2. **Given** expense capture is available, **When** I choose its dashboard option,
    **Then** I can start recording an expense without navigating through unrelated
    modules.
@@ -113,8 +115,10 @@ block opening the option.
 
 ### Functional Requirements
 
-- **FR-001**: After primary profile setup is complete, the app MUST provide a dashboard
-  as a starting point for navigating available modules and actions.
+- **FR-001**: After primary profile setup is complete, the app MUST show the dashboard
+  on ordinary app launch as the starting point for navigating available modules and
+  actions. A reminder notification requesting capture MUST continue to open expense
+  capture directly.
 - **FR-002**: The dashboard MUST provide access to every module and action available
   in the user's version of the app.
 - **FR-003**: When expense capture is available, the dashboard MUST provide a direct

@@ -15,7 +15,9 @@ import com.nestvest.profile.ui.theme.NestVestTheme
 import java.util.UUID
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CancellationException
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -72,15 +74,40 @@ class DashboardCustomizationTest {
         }
     }
 
-    @Test fun closedDatabaseReportsWriteFailureRatherThanSuccess() = runBlocking {
+    @Test fun rejectedWriteReportsFailureAndPreservesSavedChoices() = runBlocking {
         val name = "dashboard-preference-failure-${UUID.randomUUID()}.db"
+        val database = ProfileDatabase.open(context, name)
+        val repository = RoomDashboardPreferenceRepository(database.dashboardPreferenceDao())
+
+        try {
+            assertEquals(DashboardPreferenceWrite.Saved, repository.save(DashboardPreference.DEFAULT))
+            database.openHelper.writableDatabase.execSQL(
+                "CREATE TRIGGER reject_dashboard_preference BEFORE INSERT ON dashboard_preference " +
+                    "WHEN NEW.pinnedOptionIds = 'reminders' " +
+                    "BEGIN SELECT RAISE(ABORT, 'test failure'); END",
+            )
+            val result = repository.save(DashboardPreference(setOf("reminders")))
+            assertTrue(result is DashboardPreferenceWrite.Failed)
+            assertEquals(
+                DashboardPreferenceRead.Found(DashboardPreference.DEFAULT),
+                repository.observe().first(),
+            )
+        } finally {
+            database.close()
+            context.deleteDatabase(name)
+        }
+    }
+
+    @Test fun closedDatabasePropagatesRoomCancellationRatherThanSuccess() {
+        val name = "dashboard-preference-closed-${UUID.randomUUID()}.db"
         val database = ProfileDatabase.open(context, name)
         val repository = RoomDashboardPreferenceRepository(database.dashboardPreferenceDao())
         database.close()
 
         try {
-            val result = repository.save(DashboardPreference(setOf("reminders")))
-            assertTrue(result is DashboardPreferenceWrite.Failed)
+            assertThrows(CancellationException::class.java) {
+                runBlocking { repository.save(DashboardPreference(setOf("reminders"))) }
+            }
         } finally {
             context.deleteDatabase(name)
         }

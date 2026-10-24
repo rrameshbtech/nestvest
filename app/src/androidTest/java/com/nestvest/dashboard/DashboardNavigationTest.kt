@@ -1,5 +1,8 @@
 package com.nestvest.dashboard
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -23,16 +26,20 @@ class DashboardNavigationTest {
 
     @Test fun groupsAvailableOptionsAndOpensEachDestination() {
         var destination: DashboardDestination? = null
+        var state by mutableStateOf(
+            DashboardUiState(
+                pinnedOptionIds = DashboardPreference.DEFAULT.pinnedOptionIds,
+                summary = DashboardSummary.NoExpenseHistory,
+            ),
+        )
         compose.setContent {
             NestVestTheme {
                 DashboardScreen(
-                    state = DashboardUiState(
-                        pinnedOptionIds = DashboardPreference.DEFAULT.pinnedOptionIds,
-                        summary = DashboardSummary.NoExpenseHistory,
-                    ),
+                    state = state,
                     welcomeName = "Mira",
                     onOpenDestination = { destination = it },
                     onCustomize = {},
+                    onShowMore = { state = state.copy(showingMore = true) },
                     onToggle = {},
                     onSave = {},
                     onCancel = {},
@@ -42,19 +49,21 @@ class DashboardNavigationTest {
         }
 
         compose.onNodeWithText("Pinned for you").assertIsDisplayed()
-        compose.onNodeWithText("More").assertIsDisplayed()
+        compose.onNodeWithText("More").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Good to see you, Mira.").performScrollTo()
         compose.onNodeWithText("Good to see you, Mira.").assertIsDisplayed()
-        compose.onNodeWithTag("dashboard-icon-expense_capture").assertIsDisplayed()
+        compose.onNodeWithTag("dashboard-icon-expense_capture", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
         val customizeTop = compose.onNodeWithText("Customize").fetchSemanticsNode().boundsInRoot.top
         val firstTileTop = compose.onNodeWithText("Add expense").fetchSemanticsNode().boundsInRoot.top
         assertTrue("Customize should appear before the first pinned tile", customizeTop < firstTileTop)
         compose.onNodeWithText("Add expense").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_CAPTURE, destination) }
-        compose.onNodeWithText("Expenses").performClick()
+        compose.onNodeWithText("Expenses").performScrollTo().performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_HISTORY, destination) }
-        compose.onNodeWithText("See all (1)").performClick()
+        compose.onNodeWithText("See all (1)").performScrollTo().performClick()
         compose.onNodeWithText("Everything stays within reach, even when it is not pinned.").assertIsDisplayed()
-        compose.onNodeWithTag("dashboard-icon-reminders").assertIsDisplayed()
+        compose.onNodeWithTag("dashboard-icon-reminders", useUnmergedTree = true).assertIsDisplayed()
         compose.onNodeWithText("Reminders").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.REMINDERS, destination) }
     }

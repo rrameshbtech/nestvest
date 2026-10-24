@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -44,10 +47,10 @@ class DashboardAccessibilityTest {
 
         compose.onNodeWithText("Pin your favorites.").assertIsDisplayed()
         compose.onNodeWithContentDescription("Unpin Add expense").assertIsDisplayed()
-        compose.onNodeWithText("Pinned on dashboard").assertIsDisplayed()
-        compose.onNodeWithContentDescription("Pin Reminders").assertIsDisplayed().performClick()
+        compose.onAllNodesWithText("Pinned on dashboard").assertCountEquals(2)
+        compose.onNodeWithContentDescription("Pin Reminders").performScrollTo().assertIsDisplayed().performClick()
         compose.runOnIdle { assertEquals("reminders", toggledOption) }
-        compose.onNodeWithText("Save choices").assertIsDisplayed()
+        compose.onNodeWithText("Save choices").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Save choices").performClick()
         compose.runOnIdle { assertTrue(saved) }
         compose.onNodeWithText("Cancel").assertIsDisplayed()

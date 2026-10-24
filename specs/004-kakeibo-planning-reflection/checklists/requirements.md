@@ -32,4 +32,4 @@
 ## Notes
 
 - The specification is ready for `/speckit-clarify` or `/speckit-plan`.
-- Defaults for weekly pacing, unassigned expenses, and currency mismatches are documented in the specification.
+- Defaults for monthly allocation, optional total amounts, untagged expense assignment, and learning/dashboard nudges are documented in the specification.

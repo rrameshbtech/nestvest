@@ -55,14 +55,19 @@ Compare these in one browser call at 390×844. Values were read from source on
 | Primary button | visible `.primary` | ink, radius 8px, 50px | ink, radius 8px, 49px | ink, radius 8px, 49px |
 | In-phone screen title | P1/P2 `h3`, P3 `.screen h2` | 32px / 500 | 29px / 500 | 29px / 500 |
 | Focus outline | `button:focus-visible` | 3px `#53754e`, offset 4px | 3px `#53754e`, offset 3px | 3px `#53754e`, offset 3px |
+| Feature scope | Main route | Profile setup | Capture/history/reminders | Dashboard navigation |
 
 Update a row only when a mockup's source changes; do not re-derive the whole table each run.
+
+The Phase 3 Kakeibo study in [004-kakeibo-planning-reflection](../../specs/004-kakeibo-planning-reflection/ui-mockups.html)
+reuses the Phase 2 paper, ink, sage, divider, flat-card, and focus tokens above; it is a
+feature-specific flow extension, not a new visual system.
 
 ## Tool availability
 
 | Tool | Last probed | Result | Next-run action |
 |---|---|---|---|
-| `mermaid-diagram-validator` | 2026-10-24 | Fails: "Sign in to Mermaid to validate diagrams." Interrupted twice earlier the same day | Skip; mark diagram syntax **unverified**. Re-probe once only if this entry is older than 30 days or sign-in is configured |
+| Mermaid validator | 2026-10-24 | Prior validator probes failed with “Sign in to Mermaid”; latest requested retry was interrupted without a result. No local `mmdc` or Mermaid package is installed. | Mermaid diagrams are no longer required by the updated mockup workflow; validate module/submodule text-flow completeness against the checklist instead. |
 | Integrated browser + Playwright | 2026-10-24 | Works with `file://` URLs | Use one page per mockup and navigate within it |
 
 ## Decisions
@@ -79,11 +84,34 @@ Update a row only when a mockup's source changes; do not re-derive the whole tab
   summary data sources remain product/implementation decisions; this mockup uses only
   the currently implemented expense actions and reminders with synthetic sample data.
 
+### 2026-10-24 — Kakeibo planning visual and journey integration
+
+- **Decision:** Keep the implemented post-profile dashboard as the app's ordinary
+  starting point and present Kakeibo as an additional destination when the feature is
+  available. Preserve amount-first expense capture as a direct dashboard action and
+  keep the existing Phase 1 and Phase 2 screens unchanged.
+- **Rationale:** The accepted dashboard-first launch behavior is implemented in
+  `MainActivity`; reminder requests still open capture directly. Kakeibo uses the saved
+  expense vocabulary and honest totals without changing capture.
+- **Scope:** Kakeibo feature mockup and cross-feature journey only. The existing
+  dashboard mockup and app implementation are not changed by this study.
+- **Sources:** [Constitution](./constitution.md), [Phase 1 mockup](../../specs/001-local-profile-foundation/ui-mockups.html),
+  [Phase 2 expense mockup](../../specs/002-daily-expense-capture/ui-mockups.html),
+  [Phase 3 dashboard spec](../../specs/003-dashboard-navigation/spec.md), and
+  [Phase 3 Kakeibo spec](../../specs/004-kakeibo-planning-reflection/spec.md).
+  Repository sources read 2026-10-24; no external research was needed. This entry
+  supersedes the earlier proposed-dashboard wording in this decision.
+- **Open implementation handoff:** Add a Kakeibo destination when the feature becomes
+  available. This prototype does not alter production routing or assert implementation.
+
 ## Source status notes
 
 - Phase 1 profile setup and Phase 2 expense UI have implementation source in the
   repository; this records code presence, not release or device-certification status.
 - Phase 2 task documentation records remaining manual/device checks; see
   [Phase 2 tasks](../../specs/002-daily-expense-capture/tasks.md).
-- Phase 3 dashboard is specified and mockup-only in this workflow; no production
-  dashboard implementation was found.
+- Dashboard navigation is implemented in repository source, including ordinary
+  dashboard entry and direct reminder capture; the standalone dashboard mockup remains
+  a design reference.
+- Kakeibo planning and reflection is specified and mockup-only in this workflow; no
+  production Kakeibo implementation was found.

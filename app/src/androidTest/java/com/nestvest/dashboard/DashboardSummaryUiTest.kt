@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.onNodeWithTag
 import com.nestvest.dashboard.domain.DashboardDestination
 import com.nestvest.dashboard.domain.DashboardPreference
@@ -45,12 +46,12 @@ class DashboardSummaryUiTest {
             }
         }
 
-        compose.onNodeWithText("Loading today’s summary…").assertIsDisplayed()
+        compose.onNodeWithText("Loading today’s summary…").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Expenses").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_HISTORY, opened) }
 
         compose.runOnIdle { state = state.copy(summary = DashboardSummary.NoExpenseHistory) }
-        compose.onNodeWithText("No expenses recorded yet.").assertIsDisplayed()
+        compose.onNodeWithText("No expenses recorded yet.").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Expenses").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_HISTORY, opened) }
 
@@ -59,7 +60,7 @@ class DashboardSummaryUiTest {
                 summary = DashboardSummary.NoExpensesToday(LocalDate.of(2026, 10, 24), "USD"),
             )
         }
-        compose.onNodeWithText("0 today · $0.00").assertIsDisplayed()
+        compose.onNodeWithText("0 today · $0.00").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Expenses").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_HISTORY, opened) }
 
@@ -70,13 +71,14 @@ class DashboardSummaryUiTest {
                 ),
             )
         }
-        compose.onNodeWithText("1 today · $12.34").assertIsDisplayed()
-        compose.onNodeWithTag("dashboard-icon-expense_history").assertIsDisplayed()
+        compose.onNodeWithText("1 today · $12.34").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("dashboard-icon-expense_history", useUnmergedTree = true)
+            .assertIsDisplayed()
         compose.onNodeWithText("Expenses").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_HISTORY, opened) }
 
         compose.runOnIdle { state = state.copy(summary = DashboardSummary.Unavailable) }
-        compose.onNodeWithText("Summary unavailable").assertIsDisplayed()
+        compose.onNodeWithText("Summary unavailable").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Expenses").performClick()
         compose.runOnIdle { assertEquals(DashboardDestination.EXPENSE_HISTORY, opened) }
     }

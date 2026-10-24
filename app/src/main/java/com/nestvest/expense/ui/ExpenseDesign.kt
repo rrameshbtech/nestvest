@@ -120,10 +120,11 @@ internal fun ExpenseFootnote(text: String) {
 }
 
 @Composable
-internal fun ExpensePrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = true) {
+internal fun ExpensePrimaryButton(text: String, onClick: () -> Unit, enabled: Boolean = true,
+    modifier: Modifier = Modifier) {
     Button(onClick = onClick, enabled = enabled, shape = ExpenseStyle.ButtonShape,
         colors = ButtonDefaults.buttonColors(containerColor = ExpenseStyle.Ink, contentColor = Color.White),
-        modifier = Modifier.fillMaxWidth().heightIn(min = 49.dp)) {
+        modifier = modifier.fillMaxWidth().heightIn(min = 49.dp)) {
         Text(text, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
     }
 }

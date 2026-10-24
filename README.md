@@ -49,9 +49,11 @@ release signing outside version control before distributing.
 Profile and expense data stay in an app-private, credential-protected Room database.
 Receipt images are copied into private internal files, not retained as provider URIs.
 There is no
-internet permission, analytics, public service, or cloud account. This phase relies on
-Android sandboxing and device storage protection, not an additional app-managed
-database encryption key. It is not a guarantee against a compromised device.
+internet permission, analytics, public service, or cloud account. The database uses
+SQLCipher with a random passphrase wrapped by Android Keystore. Existing plaintext
+databases are converted before Room opens them, preserving their schema version and
+records. Failed migration or key verification never falls back to plaintext or
+recreates the source database. This is not a guarantee against a compromised device.
 
 Cloud backup is excluded. API 28+ permits database and receipt-file OS local device transfer
 where supported; API 26-27 excludes backup entirely because it cannot require the

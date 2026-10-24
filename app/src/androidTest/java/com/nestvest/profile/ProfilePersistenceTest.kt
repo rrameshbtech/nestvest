@@ -2,6 +2,7 @@ package com.nestvest.profile
 
 import androidx.test.core.app.ApplicationProvider
 import com.nestvest.profile.data.ProfileDatabase
+import com.nestvest.profile.data.DatabaseKeyStore
 import com.nestvest.profile.data.ProfileEntity
 import com.nestvest.profile.data.RoomProfileRepository
 import com.nestvest.profile.domain.*
@@ -21,14 +22,18 @@ class ProfilePersistenceTest {
         var db = ProfileDatabase.open(context, name)
         try {
             RoomProfileRepository(db).create(ProfileDraft("Mira", "INR"))
-            db.openHelper.writableDatabase.version = 3
+            db.openHelper.writableDatabase.let { it.version = it.version + 1 }
             db.close()
             db = ProfileDatabase.open(context, name)
             val repo = RoomProfileRepository(db)
             assertEquals(ProfileRead.Failed(StorageError.INVALID_RECORD), repo.read())
             assertEquals(ProfileWrite.Failed(StorageError.INVALID_RECORD), repo.create(ProfileDraft("Other", "USD")))
-            android.database.sqlite.SQLiteDatabase.openDatabase(
-                context.getDatabasePath(name).path, null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY,
+            net.zetetic.database.sqlcipher.SQLiteDatabase.openDatabase(
+                context.getDatabasePath(name).path,
+                DatabaseKeyStore(context).getOrCreatePassphrase(),
+                null,
+                net.zetetic.database.sqlcipher.SQLiteDatabase.OPEN_READONLY,
+                null,
             ).use { raw ->
                 raw.rawQuery("SELECT name FROM primary_profile", null).use {
                     assertTrue(it.moveToFirst())

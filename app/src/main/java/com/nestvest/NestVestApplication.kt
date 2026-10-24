@@ -5,6 +5,7 @@ import com.nestvest.dashboard.data.RoomDashboardPreferenceRepository
 import com.nestvest.profile.data.ProfileDatabase
 import com.nestvest.profile.data.RoomProfileRepository
 import com.nestvest.profile.domain.ProfileRepository
+import com.nestvest.kakeibo.data.RoomKakeiboRepository
 import com.nestvest.expense.data.ReceiptFileStore
 import com.nestvest.expense.data.RoomExpenseRepository
 import com.nestvest.expense.data.RoomReminderRepository
@@ -13,6 +14,7 @@ import com.nestvest.expense.reminder.ReminderScheduler
 
 class NestVestApplication : Application() {
     val database: ProfileDatabase by lazy { ProfileDatabase.open(this) }
+    val kakeiboRepository by lazy { RoomKakeiboRepository(database) }
     val repository: ProfileRepository by lazy { RoomProfileRepository(database) }
     val expenseRepository by lazy { RoomExpenseRepository(database, receipts = ReceiptFileStore(this)) }
     val reminderRepository by lazy { RoomReminderRepository(database) }

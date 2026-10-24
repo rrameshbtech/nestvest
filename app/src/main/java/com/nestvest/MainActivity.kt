@@ -27,6 +27,8 @@ import com.nestvest.expense.ui.ExpenseViewModel
 import com.nestvest.expense.ui.ExpenseScreen
 import com.nestvest.expense.ui.ReminderViewModel
 import com.nestvest.expense.reminder.ExpenseReminderNotifier
+import com.nestvest.kakeibo.ui.KakeiboRoute
+import com.nestvest.kakeibo.ui.KakeiboViewModel
 
 class MainActivity : ComponentActivity() {
     private var captureRequest by mutableIntStateOf(0)
@@ -62,17 +64,31 @@ class MainActivity : ComponentActivity() {
                 ProfileRoute(vm) { profile ->
                     val dashboard: DashboardViewModel = viewModel(key = "dashboard", factory = viewModelFactory {
                         initializer {
-                            DashboardViewModel(app.dashboardPreferenceRepository, app.expenseRepository, profile)
+                            DashboardViewModel(
+                                app.dashboardPreferenceRepository,
+                                app.expenseRepository,
+                                profile,
+                                kakeibo = app.kakeiboRepository,
+                            )
                         }
                     })
                     if (destination == null) {
                         DashboardRoute(dashboard) { destination = it }
+                    } else if (destination == DashboardDestination.KAKEIBO) {
+                        val kakeibo: KakeiboViewModel = viewModel(
+                            key = "kakeibo-route",
+                            factory = viewModelFactory {
+                                initializer { KakeiboViewModel(app.kakeiboRepository, profile) }
+                            },
+                        )
+                        KakeiboRoute(kakeibo) { destination = null }
                     } else {
                         val selectedDestination = checkNotNull(destination)
                         val screen = when (selectedDestination) {
                             DashboardDestination.EXPENSE_CAPTURE -> ExpenseScreen.CAPTURE
                             DashboardDestination.EXPENSE_HISTORY -> ExpenseScreen.HISTORY
                             DashboardDestination.REMINDERS -> ExpenseScreen.REMINDERS
+                            DashboardDestination.KAKEIBO -> error("Kakeibo has a dedicated route")
                         }
                         val expenses: ExpenseViewModel = viewModel(key = "expense-route", factory = viewModelFactory {
                             initializer {

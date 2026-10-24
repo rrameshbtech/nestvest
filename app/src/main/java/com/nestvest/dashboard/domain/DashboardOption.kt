@@ -3,7 +3,7 @@ package com.nestvest.dashboard.domain
 import androidx.annotation.StringRes
 import com.nestvest.R
 
-enum class DashboardDestination { EXPENSE_CAPTURE, EXPENSE_HISTORY, REMINDERS }
+enum class DashboardDestination { EXPENSE_CAPTURE, EXPENSE_HISTORY, REMINDERS, KAKEIBO }
 
 data class DashboardOption(
     val id: String,

@@ -30,7 +30,7 @@ $ARGUMENTS
 | Term | Default path | Holds |
 |---|---|---|
 | **design memory** | `.specify/memory/design-research.md` | Approved rules/tokens, dated decisions, accepted prototype limitations, rendered comparison map, tool availability |
-| **journey map** | `.specify/memory/user-journeys.md` | Cross-feature journey table, Mermaid flowchart, per-feature status |
+| **journey map** | `.specify/memory/user-journeys.md` | Cross-feature journey inventory, module/sub-module text flow, per-feature status |
 | **mockup** | `<FEATURE_DIR>/ui-mockups.html` | Self-contained interactive screens and states |
 | **ledger** | `<FEATURE_DIR>/mockup-review.md` | Stage status, context digest, coverage table, browser results, reviews, open questions |
 
@@ -110,11 +110,18 @@ modification/commit date. Re-read only changed sources.
   same-state contradiction; inaccessible entry point; change to existing
   implemented behavior whose intended transition is unclear. Otherwise record the
   delta and continue.
-- Journey map: one Markdown table plus one Mermaid `flowchart`. Include actor,
-  trigger, entry, screens/actions, decisions, exits/back, validation failures,
-  optional/skip paths, empty/error/recovery states, links, and per-feature status.
-  Trace at least one complete journey through existing and new features. Mark the
-  target's additions as proposed, and unresolved proposals as pending.
+- Journey map: one Markdown inventory table plus a text-based end-to-end flow
+  organized by module and sub-module. Do not require Mermaid diagrams or Mermaid
+  validation. Include actor, trigger, entry, screens/actions, decisions, exits/back,
+  validation failures, optional/skip paths, empty/error/recovery states, links, and
+  per-feature status. Trace at least one complete journey through existing and new
+  features. Mark the target's additions as proposed, and unresolved proposals as
+  pending.
+- Validate the text flow with a completeness check: each module names its entry,
+  main path, decision branches, optional/skip paths, failures and recovery, exits/back
+  destinations, cross-module links, and implementation status; check that links
+  between modules agree with the inventory table and approved behavior. Record any
+  missing path as an open question rather than inferring product behavior.
 - Design memory: change only what changed. Dated decisions with rationale and scope;
   mark superseded entries. Separate verified source facts from recommendations.
   Research externally only for a specific unresolved question; cite sources with
@@ -173,8 +180,9 @@ every script. One page per mockup; navigate instead of opening duplicates.
 - Locators scoped to a container and unique. Re-query after re-render.
 - Each assertion records its own result; dependent checks become `blocked`, not skipped.
 - At most one targeted retry per failed call. After a fix, rerun only affected journeys.
-- Mermaid: read design memory tool availability. If recently unavailable, skip and
-  mark **unverified**; else validate once and record the dated result.
+- Text journey flow: run the module/sub-module completeness check from Stage 2 and
+  record its result in the ledger. No diagram renderer or syntax-validation tool is
+  required.
 - Record viewport sizes and observed values per check in the ledger. No full
   accessibility audit claims. Avoid screenshot/log files unless useful as evidence.
 - No browser tools: complete source checks; mark rendering, interaction, and

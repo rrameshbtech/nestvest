@@ -64,6 +64,8 @@ import com.nestvest.dashboard.domain.DashboardDestination
 import com.nestvest.dashboard.domain.DashboardOption
 import com.nestvest.dashboard.domain.DashboardOptionCatalog
 import com.nestvest.dashboard.domain.DashboardSummary
+import com.nestvest.kakeibo.domain.CategoryHealth
+import com.nestvest.kakeibo.domain.DashboardKakeiboSummary
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
@@ -97,6 +99,7 @@ fun DashboardRoute(
     DashboardScreen(
         state = state,
         welcomeName = viewModel.profile.name,
+        kakeiboCurrencyCode = viewModel.profile.preferredCurrency,
         onOpenDestination = onOpenDestination,
         onCustomize = viewModel::beginCustomization,
         onShowMore = viewModel::showMore,
@@ -113,6 +116,7 @@ fun DashboardRoute(
 fun DashboardScreen(
     state: DashboardUiState,
     welcomeName: String = "",
+    kakeiboCurrencyCode: String = "USD",
     onOpenDestination: (DashboardDestination) -> Unit,
     onCustomize: () -> Unit,
     onShowMore: () -> Unit = {},
@@ -307,6 +311,11 @@ fun DashboardScreen(
                         Text(stringResource(R.string.dashboard_customize))
                     }
                 }
+                KakeiboDashboardCard(
+                    summary = state.kakeiboSummary,
+                    currencyCode = kakeiboCurrencyCode,
+                    onClick = { onOpenDestination(DashboardDestination.KAKEIBO) },
+                )
                 if (pinned.isEmpty()) {
                     Text(stringResource(R.string.dashboard_no_pinned))
                 } else pinned.forEach { option ->
@@ -335,6 +344,96 @@ fun DashboardScreen(
             }
         }
     }
+}
+
+@Composable
+private fun KakeiboDashboardCard(
+    summary: DashboardKakeiboSummary,
+    currencyCode: String,
+    onClick: () -> Unit,
+) {
+    val month = java.time.YearMonth.now().format(
+        DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault()),
+    )
+    val title = stringResource(R.string.dashboard_kakeibo_title, month)
+    val healthLabel: String?
+    val message = when (summary) {
+        DashboardKakeiboSummary.Loading -> {
+            healthLabel = null
+            stringResource(R.string.dashboard_kakeibo_loading, month)
+        }
+        DashboardKakeiboSummary.NoPlan -> {
+            healthLabel = null
+            stringResource(R.string.dashboard_kakeibo_nudge, month)
+        }
+        DashboardKakeiboSummary.Unavailable -> {
+            healthLabel = null
+            stringResource(R.string.dashboard_kakeibo_unavailable)
+        }
+        is DashboardKakeiboSummary.Available -> {
+            healthLabel = stringResource(
+                when (summary.health) {
+                    CategoryHealth.NO_PLAN -> R.string.kakeibo_health_no_plan
+                    CategoryHealth.NO_ALLOCATION -> R.string.kakeibo_health_no_allocation
+                    CategoryHealth.WITHIN_PLAN -> R.string.kakeibo_health_within_plan
+                    CategoryHealth.AT_LIMIT -> R.string.kakeibo_health_at_limit
+                    CategoryHealth.OVER_PLAN -> R.string.kakeibo_health_over_plan
+                },
+            )
+            stringResource(
+                R.string.dashboard_kakeibo_summary,
+                dashboardCurrency(summary.spentMinorUnits, currencyCode),
+                dashboardCurrency(summary.plannedMinorUnits, currencyCode),
+            )
+        }
+    }
+    val accessibilityLabel = listOfNotNull(title, message, healthLabel).joinToString(". ")
+    Card(
+        modifier = Modifier.fillMaxWidth()
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics { contentDescription = accessibilityLabel }
+            .testTag("dashboard-kakeibo-tile"),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, ExpenseStyle.NoteBorder),
+        colors = CardDefaults.cardColors(containerColor = ExpenseStyle.Note),
+    ) {
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 78.dp)
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Surface(
+                modifier = Modifier.size(38.dp).testTag("dashboard-icon-kakeibo"),
+                shape = CircleShape,
+                color = ExpenseStyle.Pale,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    ExpenseGlyph(ExpenseSymbol.CULTURE, Modifier.size(20.dp))
+                }
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(message, style = MaterialTheme.typography.bodySmall, color = ExpenseStyle.Ink)
+                if (healthLabel != null) {
+                    Text(
+                        stringResource(R.string.dashboard_kakeibo_health, healthLabel),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = ExpenseStyle.Green,
+                    )
+                }
+            }
+            ExpenseGlyph(ExpenseSymbol.ARROW, Modifier.size(18.dp))
+        }
+    }
+}
+
+private fun dashboardCurrency(amount: Long, currencyCode: String): String {
+    val currency = Currency.getInstance(currencyCode)
+    val decimalDigits = currency.defaultFractionDigits.coerceAtLeast(0)
+    return NumberFormat.getCurrencyInstance(Locale.getDefault()).apply {
+        this.currency = currency
+    }.format(BigDecimal.valueOf(amount, decimalDigits))
 }
 
 @Composable
@@ -380,6 +479,7 @@ private fun DashboardOptionCard(
                                 DashboardDestination.EXPENSE_CAPTURE -> ExpenseSymbol.PLUS
                                 DashboardDestination.EXPENSE_HISTORY -> ExpenseSymbol.RECEIPT
                                 DashboardDestination.REMINDERS -> ExpenseSymbol.REMINDER
+                                DashboardDestination.KAKEIBO -> ExpenseSymbol.RECEIPT
                             },
                             modifier = Modifier.size(20.dp),
                         )

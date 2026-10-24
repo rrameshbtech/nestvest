@@ -31,9 +31,10 @@ when the device is offline.
 
 **Acceptance Scenarios**:
 
-1. **Given** I have completed primary profile setup, **When** I open the app, **Then** I
-   can begin entering an expense amount without first navigating through unrelated
-   screens.
+1. **Given** I have completed primary profile setup, **When** I open the app normally,
+   **Then** I see the dashboard and can open amount capture directly from its Add
+   expense action without navigating through unrelated modules. When I open capture
+   from an expense reminder notification, the app opens capture directly.
 2. **Given** I enter a valid amount, **When** I choose Save without entering any other
    details, **Then** the app saves the expense and confirms completion without requiring
    a category, description, vendor, or receipt.
@@ -172,7 +173,9 @@ scheduled per day at the selected time, open capture from it, and disable remind
 ### Functional Requirements
 
 - **FR-001**: The app MUST provide direct access to a focused manual expense capture
-  experience after primary profile setup.
+  experience from the dashboard after primary profile setup. When a reminder
+  notification requests expense capture, the app MUST open that capture experience
+  directly.
 - **FR-002**: The app MUST allow a user to save an expense by providing only a valid
   amount and an explicit save action.
 - **FR-003**: The app MUST use the primary profile's selected currency for a new expense
@@ -288,6 +291,9 @@ scheduled per day at the selected time, open capture from it, and disable remind
 - A manual expense represents an outflow. Income, transfers, recurring transactions,
   budgets, and financial summaries are outside this phase.
 - The device's local date and time at capture are used as the expense's capture time.
+- After profile setup, ordinary app launch opens the Phase 3 dashboard, where expense
+  capture is available through a direct Add expense action. Expense reminder
+  notifications continue to open capture directly.
 - A receipt image is optional and remains subject to the app's local-only financial
   data boundary; users may decline or cancel image selection.
 - Daily reminders are off by default, are locally generated, and depend on user

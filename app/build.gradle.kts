@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.lifecycle.savedstate)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.sqlcipher.android)
     implementation(libs.coroutines)
     implementation(libs.work.runtime)
     ksp(libs.room.compiler)

@@ -12,8 +12,15 @@ import com.nestvest.dashboard.domain.DashboardSummary
 import com.nestvest.dashboard.domain.summarizeExpenses
 import com.nestvest.expense.domain.ExpenseRead
 import com.nestvest.expense.domain.ExpenseRepository
+import com.nestvest.kakeibo.domain.DashboardKakeiboSummary
+import com.nestvest.kakeibo.domain.KakeiboPeriod
+import com.nestvest.kakeibo.domain.KakeiboRead
+import com.nestvest.kakeibo.domain.KakeiboRepository
+import com.nestvest.kakeibo.domain.calculateMonthlyProgress
+import com.nestvest.kakeibo.domain.dashboardSummary
 import com.nestvest.profile.domain.PrimaryProfile
 import java.time.Clock
+import java.time.YearMonth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +37,7 @@ data class DashboardUiState(
     val saveSucceeded: Boolean = false,
     val saveError: Boolean = false,
     val summary: DashboardSummary = DashboardSummary.Loading,
+    val kakeiboSummary: DashboardKakeiboSummary = DashboardKakeiboSummary.Loading,
 )
 
 class DashboardViewModel(
@@ -37,11 +45,13 @@ class DashboardViewModel(
     private val expenses: ExpenseRepository,
     val profile: PrimaryProfile,
     private val clock: () -> Clock = { Clock.systemDefaultZone() },
+    private val kakeibo: KakeiboRepository? = null,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(DashboardUiState())
     val state = mutableState.asStateFlow()
     private var expenseObservation: Job? = null
     private var preferenceObservation: Job? = null
+    private var kakeiboSummaryJob: Job? = null
     private var allExpenses = emptyList<com.nestvest.expense.domain.Expense>()
     private var expenseReadFailed = false
 
@@ -52,6 +62,7 @@ class DashboardViewModel(
 
     fun resume() {
         observeExpenses()
+        refreshKakeiboSummary()
         if (state.value.preferenceError) observePreferences()
     }
 
@@ -150,10 +161,14 @@ class DashboardViewModel(
                         allExpenses = result.expenses
                         expenseReadFailed = false
                         refreshSummary()
+                        refreshKakeiboSummary()
                     }
                     is ExpenseRead.Failed -> {
                         expenseReadFailed = true
-                        mutableState.value = state.value.copy(summary = DashboardSummary.Unavailable)
+                        mutableState.value = state.value.copy(
+                            summary = DashboardSummary.Unavailable,
+                            kakeiboSummary = DashboardKakeiboSummary.Unavailable,
+                        )
                     }
                 }
             }
@@ -165,5 +180,48 @@ class DashboardViewModel(
             summary = if (expenseReadFailed) DashboardSummary.Unavailable
             else summarizeExpenses(allExpenses, profile.preferredCurrency, clock()),
         )
+    }
+
+    private fun refreshKakeiboSummary() {
+        kakeiboSummaryJob?.cancel()
+        mutableState.value = state.value.copy(kakeiboSummary = DashboardKakeiboSummary.Loading)
+        val repository = kakeibo ?: run {
+            mutableState.value = state.value.copy(kakeiboSummary = DashboardKakeiboSummary.Unavailable)
+            return
+        }
+        if (expenseReadFailed) {
+            mutableState.value = state.value.copy(kakeiboSummary = DashboardKakeiboSummary.Unavailable)
+            return
+        }
+        kakeiboSummaryJob = viewModelScope.launch {
+            val now = clock()
+            val month = YearMonth.now(now)
+            when (val result = repository.readPlan(month)) {
+                KakeiboRead.Absent -> mutableState.value = state.value.copy(
+                    kakeiboSummary = DashboardKakeiboSummary.NoPlan,
+                )
+                is KakeiboRead.Failed -> mutableState.value = state.value.copy(
+                    kakeiboSummary = DashboardKakeiboSummary.Unavailable,
+                )
+                is KakeiboRead.Found -> {
+                    val range = KakeiboPeriod(month).epochRange(now.zone)
+                    val expenses = allExpenses.filter { range.contains(it.capturedAtEpochMillis) }
+                    try {
+                        val progress = calculateMonthlyProgress(
+                            plan = result.value,
+                            expenses = expenses,
+                            zoneId = now.zone,
+                        )
+                        mutableState.value = state.value.copy(
+                            kakeiboSummary = dashboardSummary(result.value, progress),
+                        )
+                    } catch (_: ArithmeticException) {
+                        mutableState.value = state.value.copy(
+                            kakeiboSummary = DashboardKakeiboSummary.Unavailable,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
